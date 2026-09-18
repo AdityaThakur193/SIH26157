@@ -1,5 +1,5 @@
-﻿from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks
-from app.models.schemas import IngestResponse
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks
+from app.models.schemas import IngestResponse, ComplianceIngestResponse
 from app.services.ingestion.hash_verifier import compute_file_hash, log_to_ledger
 from app.services.ingestion.log_parser import LogParserEngine
 from app.services.deduplication.simhash import SimHashEngine
@@ -57,7 +57,7 @@ async def ingest_evidence(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.post("/ingest/compliance")
+@router.post("/ingest/compliance", response_model=ComplianceIngestResponse)
 async def ingest_compliance(
     cse_id: str = Form(...),
     file: UploadFile = File(...)
@@ -75,6 +75,14 @@ async def ingest_compliance(
         with open(comp_file, "w") as f:
             json.dump(result, f)
             
-        return {"cse_id": cse_id, "compliance_result": result}
+        return ComplianceIngestResponse(
+            cse_id=cse_id,
+            status_label=result.get("status_label", "EVALUATED"),
+            status_color=result.get("status_color", "green"),
+            evaluation_metric=result.get("evaluation_metric", "NCIIPC Guidelines"),
+            fidelity_gap=result.get("fidelity_gap", "No critical gaps"),
+            findings_count=result.get("findings_count", 0),
+            compliance_result=result
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

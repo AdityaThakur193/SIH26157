@@ -1,4 +1,4 @@
-﻿from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 
 class UnifiedLogRecord(BaseModel):
@@ -62,6 +62,15 @@ class IngestResponse(BaseModel):
     total_raw_logs: int
     deduplicated_clusters: int
     status: str
+
+class ComplianceIngestResponse(BaseModel):
+    cse_id: str
+    status_label: str
+    status_color: str
+    evaluation_metric: str
+    fidelity_gap: str
+    findings_count: int
+    compliance_result: Optional[Dict[str, Any]] = None
 
 class CopilotRequest(BaseModel):
     query: str

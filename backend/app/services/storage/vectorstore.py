@@ -100,8 +100,8 @@ class VectorStoreEngine:
         cursor.execute("SELECT SUM(count) FROM incidents_fts")
         total_raw = cursor.fetchone()[0] or 0
         
-        # High priority findings (e.g. severity = HIGH)
-        cursor.execute("SELECT COUNT(*) FROM incidents_fts WHERE severity = 'HIGH'")
+        # High priority findings (e.g. severity = High or Critical)
+        cursor.execute("SELECT COUNT(*) FROM incidents_fts WHERE UPPER(severity) IN ('HIGH', 'CRITICAL')")
         high_severity_clusters = cursor.fetchone()[0] or 0
         
         # Entity count from ledger (if exists)
