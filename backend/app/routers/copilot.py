@@ -3,11 +3,10 @@ from app.models.schemas import CopilotRequest, CopilotResponse
 from app.services.ai.copilot import CopilotEngine
 
 router = APIRouter(prefix="/api/v1/copilot", tags=["AI Copilot"])
-copilot_engine = CopilotEngine()
-
 @router.post("/query", response_model=CopilotResponse)
 def query_copilot(payload: CopilotRequest):
     try:
+        copilot_engine = CopilotEngine()
         result = copilot_engine.query(payload.query)
         
         # Simple heuristic to flag findings if the LLM detects violations

@@ -5,7 +5,7 @@ from app.services.scoring.threat_score import ThreatScoringEngine
 from app.services.scoring.anomaly_engine import AnomalyEngine
 from app.services.scoring.asset_exposure import AssetExposureEngine
 from app.services.scoring.peer_variance import PeerVarianceEngine
-from app.services.ingestion.hash_verifier import update_entity_score, get_all_entities, get_entity_name
+from app.services.ingestion.hash_verifier import update_entity_score, get_all_entities, get_entity_name, reset_ledger
 import os
 import json
 from datetime import datetime
@@ -218,3 +218,16 @@ def get_cse_detail(cse_id: str, sector: str = "General"):
             )
         ]
     )
+
+@router.post("/reset")
+def reset_all_data():
+    """Permanently purges all SQLite telemetry clusters, ChromaDB embeddings, compliance records, and audit ledgers."""
+    try:
+        vectorstore.reset_store()
+        reset_ledger()
+        return {
+            "status": "SUCCESS",
+            "message": "All databases, audit ledgers, vectorstores, and entity assessments have been permanently purged."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database purge failed: {str(e)}")

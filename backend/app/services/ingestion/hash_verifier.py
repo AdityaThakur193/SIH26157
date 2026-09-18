@@ -1,4 +1,4 @@
-﻿import hashlib
+import hashlib
 import sqlite3
 import os
 from datetime import datetime
@@ -86,3 +86,13 @@ def get_entity_name(cse_id: str) -> str:
     if row:
         return row[0]
     return f"Entity {cse_id}"
+
+def reset_ledger():
+    init_ledger()
+    conn = sqlite3.connect(LEDGER_DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM audit_ledger")
+    cursor.execute("DELETE FROM entity_scores")
+    conn.commit()
+    conn.close()
+    return True

@@ -146,3 +146,25 @@ class VectorStoreEngine:
             c.last_seen = r[8] if len(r)>8 else "N/A"
             clusters.append(c)
         return clusters
+
+    def reset_store(self):
+        cursor = self.conn.cursor()
+        cursor.execute("DELETE FROM incidents_fts")
+        self.conn.commit()
+        try:
+            self.chroma_client.delete_collection("sat_sa_incidents")
+        except Exception:
+            pass
+        self.collection = self.chroma_client.get_or_create_collection(
+            name="sat_sa_incidents",
+            metadata={"hnsw:space": "cosine"}
+        )
+        # Also clean up any cached compliance JSON files in DB_DIR
+        if os.path.exists(DB_DIR):
+            for fname in os.listdir(DB_DIR):
+                if fname.endswith("_compliance.json"):
+                    try:
+                        os.remove(os.path.join(DB_DIR, fname))
+                    except Exception:
+                        pass
+        return True
