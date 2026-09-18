@@ -1,4 +1,4 @@
-﻿import json
+import json
 import re
 import ollama
 from typing import Dict, Any
@@ -19,18 +19,29 @@ class ComplianceEngine:
                 "findings_count": 0
             }
             
-        prompt = f'''You are an NCIIPC compliance auditor. Analyze the provided ISMS policy document.
-Check for mandatory requirements like 2FA/MFA, password rotation, data encryption at rest, and regular audits.
-Output ONLY a JSON object with EXACTLY these keys (no markdown, no extra text):
+        prompt = f"""You are a strict NCIIPC cybersecurity compliance auditor evaluating an enterprise ISMS policy document.
+Evaluate the document strictly against these 4 mandatory controls:
+1. Multi-Factor Authentication (MFA/2FA) enforced
+2. Password rotation policy (max 90-120 days)
+3. Data encryption at rest and in transit
+4. Regular security audits (conducted annually or more frequently, such as quarterly)
+
+Rules:
+- If ALL 4 controls are satisfactorily met in the document:
+  "status" must be "PASSING", "gap" must be "All mandatory NCIIPC baseline controls satisfied", and "findings" must be 0.
+- If ANY controls are missing, weak, or optional:
+  "status" must be "FAILING", "gap" must state the single biggest missing control, and "findings" must be the integer count of missing/flawed controls (1 to 4).
+
+Respond ONLY with valid JSON matching this exact structure:
 {{
-  "status": "FAILING",
-  "gap": "A brief 1-sentence description of the biggest missing control.",
-  "findings": 3
+  "status": "PASSING",
+  "gap": "Description",
+  "findings": 0
 }}
 
-Document:
+Document to audit:
 {document_text}
-'''
+"""
         try:
             response = ollama.chat(model='llama3.1:8b', messages=[
                 {'role': 'user', 'content': prompt}
