@@ -1,0 +1,501 @@
+timestamp,case_id,asset_ip,severity,analyst_id,time_to_close_mins,escalated,resolution_notes
+2026-09-01T00:00:00,SOC-CASE-1000,10.0.2.50 (UserVLAN),Medium,Analyst_C,34,No,"False positive, closed."
+2026-09-01T02:00:00,SOC-CASE-1001,10.0.1.5 (Web),Medium,Analyst_C,32,No,"False positive, closed."
+2026-09-01T04:00:00,SOC-CASE-1002,10.0.1.5 (Web),High,Analyst_B,4,No,No action needed.
+2026-09-01T06:00:00,SOC-CASE-1003,10.0.3.10 (Mail),Medium,Analyst_C,49,No,"False positive, closed."
+2026-09-01T08:00:00,SOC-CASE-1004,10.0.2.50 (UserVLAN),Low,Analyst_C,32,No,"False positive, closed."
+2026-09-01T10:00:00,SOC-CASE-1005,10.0.1.5 (Web),Medium,Analyst_C,60,No,"False positive, closed."
+2026-09-01T12:00:00,SOC-CASE-1006,10.0.2.50 (UserVLAN),Low,Analyst_B,69,No,Escalated to Tier 2.
+2026-09-01T14:00:00,SOC-CASE-1007,10.0.1.5 (Web),Low,Analyst_A,17,No,"Investigated payload, blocked IP."
+2026-09-01T16:00:00,SOC-CASE-1008,10.0.1.5 (Web),High,Analyst_B,1,No,No action needed.
+2026-09-01T18:00:00,SOC-CASE-1009,10.0.3.10 (Mail),Medium,Analyst_C,53,No,"False positive, closed."
+2026-09-01T20:00:00,SOC-CASE-1010,10.0.3.10 (Mail),Low,Analyst_C,57,No,"False positive, closed."
+2026-09-01T22:00:00,SOC-CASE-1011,10.0.2.50 (UserVLAN),High,Analyst_B,4,No,Closed as false positive.
+2026-09-02T00:00:00,SOC-CASE-1012,10.0.2.50 (UserVLAN),Medium,Analyst_A,32,No,Isolated host and scanned.
+2026-09-02T02:00:00,SOC-CASE-1013,10.0.2.50 (UserVLAN),Low,Analyst_C,11,No,"False positive, closed."
+2026-09-02T04:00:00,SOC-CASE-1014,10.0.3.10 (Mail),High,Analyst_B,3,No,Routine traffic.
+2026-09-02T06:00:00,SOC-CASE-1015,10.0.3.10 (Mail),Low,Analyst_A,32,No,Escalated to Tier 2.
+2026-09-02T08:00:00,SOC-CASE-1016,10.0.2.50 (UserVLAN),Low,Analyst_B,42,No,Isolated host and scanned.
+2026-09-02T10:00:00,SOC-CASE-1017,10.0.3.10 (Mail),Medium,Analyst_A,31,No,"Investigated payload, blocked IP."
+2026-09-02T12:00:00,SOC-CASE-1018,10.0.2.50 (UserVLAN),High,Analyst_C,47,No,"False positive, closed."
+2026-09-02T14:00:00,SOC-CASE-1019,10.0.3.10 (Mail),Low,Analyst_A,90,No,Escalated to Tier 2.
+2026-09-02T16:00:00,SOC-CASE-1020,10.0.3.10 (Mail),Low,Analyst_B,85,No,Isolated host and scanned.
+2026-09-02T18:00:00,SOC-CASE-1021,10.0.3.10 (Mail),Medium,Analyst_B,53,No,Escalated to Tier 2.
+2026-09-02T20:00:00,SOC-CASE-1022,10.0.1.5 (Web),High,Analyst_A,25,Yes,"Investigated payload, blocked IP."
+2026-09-02T22:00:00,SOC-CASE-1023,10.0.1.5 (Web),Low,Analyst_A,56,No,"Investigated payload, blocked IP."
+2026-09-03T00:00:00,SOC-CASE-1024,10.0.3.10 (Mail),Medium,Analyst_A,27,No,Escalated to Tier 2.
+2026-09-03T02:00:00,SOC-CASE-1025,10.0.3.10 (Mail),Low,Analyst_A,94,No,"Investigated payload, blocked IP."
+2026-09-03T04:00:00,SOC-CASE-1026,10.0.2.50 (UserVLAN),High,Analyst_A,80,Yes,Escalated to Tier 2.
+2026-09-03T06:00:00,SOC-CASE-1027,10.0.3.10 (Mail),High,Analyst_A,88,Yes,Escalated to Tier 2.
+2026-09-03T08:00:00,SOC-CASE-1028,10.0.2.50 (UserVLAN),High,Analyst_C,23,No,"False positive, closed."
+2026-09-03T10:00:00,SOC-CASE-1029,10.0.1.5 (Web),Low,Analyst_C,19,No,"False positive, closed."
+2026-09-03T12:00:00,SOC-CASE-1030,10.0.3.10 (Mail),Low,Analyst_C,49,No,"False positive, closed."
+2026-09-03T14:00:00,SOC-CASE-1031,10.0.2.50 (UserVLAN),Low,Analyst_A,107,No,Escalated to Tier 2.
+2026-09-03T16:00:00,SOC-CASE-1032,10.0.2.50 (UserVLAN),Medium,Analyst_B,52,No,Escalated to Tier 2.
+2026-09-03T18:00:00,SOC-CASE-1033,10.0.2.50 (UserVLAN),Medium,Analyst_B,48,No,Isolated host and scanned.
+2026-09-03T20:00:00,SOC-CASE-1034,10.0.1.5 (Web),Medium,Analyst_B,70,No,"Investigated payload, blocked IP."
+2026-09-03T22:00:00,SOC-CASE-1035,10.0.1.5 (Web),Low,Analyst_A,109,No,Isolated host and scanned.
+2026-09-04T00:00:00,SOC-CASE-1036,10.0.1.5 (Web),Low,Analyst_C,35,No,"False positive, closed."
+2026-09-04T02:00:00,SOC-CASE-1037,10.0.1.5 (Web),Critical,Analyst_A,28,Yes,Isolated host and scanned.
+2026-09-04T04:00:00,SOC-CASE-1038,10.0.1.5 (Web),Medium,Analyst_A,63,No,Isolated host and scanned.
+2026-09-04T06:00:00,SOC-CASE-1039,10.0.1.5 (Web),Medium,Analyst_C,52,No,"False positive, closed."
+2026-09-04T08:00:00,SOC-CASE-1040,10.0.3.10 (Mail),Medium,Analyst_A,77,No,Isolated host and scanned.
+2026-09-04T10:00:00,SOC-CASE-1041,10.0.1.5 (Web),Critical,Analyst_B,4,No,Routine traffic.
+2026-09-04T12:00:00,SOC-CASE-1042,10.0.1.5 (Web),Medium,Analyst_B,104,No,Isolated host and scanned.
+2026-09-04T14:00:00,SOC-CASE-1043,10.0.1.5 (Web),Medium,Analyst_A,51,No,"Investigated payload, blocked IP."
+2026-09-04T16:00:00,SOC-CASE-1044,10.0.3.10 (Mail),Low,Analyst_C,28,No,"False positive, closed."
+2026-09-04T18:00:00,SOC-CASE-1045,10.0.2.50 (UserVLAN),Medium,Analyst_B,117,No,Isolated host and scanned.
+2026-09-04T20:00:00,SOC-CASE-1046,10.0.2.50 (UserVLAN),High,Analyst_B,1,No,Routine traffic.
+2026-09-04T22:00:00,SOC-CASE-1047,10.0.1.5 (Web),Low,Analyst_C,24,No,"False positive, closed."
+2026-09-05T00:00:00,SOC-CASE-1048,10.0.1.5 (Web),High,Analyst_A,28,Yes,"Investigated payload, blocked IP."
+2026-09-05T02:00:00,SOC-CASE-1049,10.0.3.10 (Mail),Low,Analyst_A,27,No,Escalated to Tier 2.
+2026-09-05T04:00:00,SOC-CASE-1050,10.0.1.5 (Web),High,Analyst_B,1,No,Routine traffic.
+2026-09-05T06:00:00,SOC-CASE-1051,10.0.1.5 (Web),Critical,Analyst_A,113,Yes,Isolated host and scanned.
+2026-09-05T08:00:00,SOC-CASE-1052,10.0.1.5 (Web),Low,Analyst_B,104,No,Isolated host and scanned.
+2026-09-05T10:00:00,SOC-CASE-1053,10.0.1.5 (Web),High,Analyst_B,3,No,No action needed.
+2026-09-05T12:00:00,SOC-CASE-1054,10.0.3.10 (Mail),Medium,Analyst_A,61,No,"Investigated payload, blocked IP."
+2026-09-05T14:00:00,SOC-CASE-1055,10.0.3.10 (Mail),Medium,Analyst_C,24,No,"False positive, closed."
+2026-09-05T16:00:00,SOC-CASE-1056,10.0.3.10 (Mail),Low,Analyst_B,117,No,"Investigated payload, blocked IP."
+2026-09-05T18:00:00,SOC-CASE-1057,10.0.1.5 (Web),Medium,Analyst_A,18,No,"Investigated payload, blocked IP."
+2026-09-05T20:00:00,SOC-CASE-1058,10.0.3.10 (Mail),Low,Analyst_A,66,No,Escalated to Tier 2.
+2026-09-05T22:00:00,SOC-CASE-1059,10.0.1.5 (Web),Low,Analyst_A,50,No,Escalated to Tier 2.
+2026-09-06T00:00:00,SOC-CASE-1060,10.0.1.5 (Web),Low,Analyst_C,37,No,"False positive, closed."
+2026-09-06T02:00:00,SOC-CASE-1061,10.0.1.5 (Web),Low,Analyst_B,22,No,Escalated to Tier 2.
+2026-09-06T04:00:00,SOC-CASE-1062,10.0.2.50 (UserVLAN),Medium,Analyst_A,35,No,Escalated to Tier 2.
+2026-09-06T06:00:00,SOC-CASE-1063,10.0.2.50 (UserVLAN),Medium,Analyst_B,65,No,Isolated host and scanned.
+2026-09-06T08:00:00,SOC-CASE-1064,10.0.1.5 (Web),Medium,Analyst_A,111,No,"Investigated payload, blocked IP."
+2026-09-06T10:00:00,SOC-CASE-1065,10.0.3.10 (Mail),Low,Analyst_B,26,No,Isolated host and scanned.
+2026-09-06T12:00:00,SOC-CASE-1066,10.0.2.50 (UserVLAN),Low,Analyst_A,28,No,Escalated to Tier 2.
+2026-09-06T14:00:00,SOC-CASE-1067,10.0.1.5 (Web),Low,Analyst_C,31,No,"False positive, closed."
+2026-09-06T16:00:00,SOC-CASE-1068,10.0.1.5 (Web),Medium,Analyst_B,98,No,"Investigated payload, blocked IP."
+2026-09-06T18:00:00,SOC-CASE-1069,10.0.2.50 (UserVLAN),Low,Analyst_B,65,No,Isolated host and scanned.
+2026-09-06T20:00:00,SOC-CASE-1070,10.0.1.5 (Web),Medium,Analyst_B,105,No,Isolated host and scanned.
+2026-09-06T22:00:00,SOC-CASE-1071,10.0.1.5 (Web),Medium,Analyst_C,13,No,"False positive, closed."
+2026-09-07T00:00:00,SOC-CASE-1072,10.0.2.50 (UserVLAN),Medium,Analyst_A,107,No,Isolated host and scanned.
+2026-09-07T02:00:00,SOC-CASE-1073,10.0.3.10 (Mail),Medium,Analyst_C,56,No,"False positive, closed."
+2026-09-07T04:00:00,SOC-CASE-1074,10.0.3.10 (Mail),Medium,Analyst_B,46,No,Isolated host and scanned.
+2026-09-07T06:00:00,SOC-CASE-1075,10.0.1.5 (Web),Low,Analyst_B,69,No,Escalated to Tier 2.
+2026-09-07T08:00:00,SOC-CASE-1076,10.0.1.5 (Web),High,Analyst_C,18,No,"False positive, closed."
+2026-09-07T10:00:00,SOC-CASE-1077,10.0.3.10 (Mail),High,Analyst_B,2,No,No action needed.
+2026-09-07T12:00:00,SOC-CASE-1078,10.0.2.50 (UserVLAN),Low,Analyst_A,119,No,"Investigated payload, blocked IP."
+2026-09-07T14:00:00,SOC-CASE-1079,10.0.1.5 (Web),Medium,Analyst_C,53,No,"False positive, closed."
+2026-09-07T16:00:00,SOC-CASE-1080,10.0.1.5 (Web),Medium,Analyst_B,102,No,"Investigated payload, blocked IP."
+2026-09-07T18:00:00,SOC-CASE-1081,10.0.2.50 (UserVLAN),Medium,Analyst_A,40,No,Isolated host and scanned.
+2026-09-07T20:00:00,SOC-CASE-1082,10.0.3.10 (Mail),Low,Analyst_A,117,No,"Investigated payload, blocked IP."
+2026-09-07T22:00:00,SOC-CASE-1083,10.0.2.50 (UserVLAN),Low,Analyst_A,73,No,Escalated to Tier 2.
+2026-09-08T00:00:00,SOC-CASE-1084,10.0.1.5 (Web),Low,Analyst_A,107,No,Escalated to Tier 2.
+2026-09-08T02:00:00,SOC-CASE-1085,10.0.1.5 (Web),Low,Analyst_A,52,No,Escalated to Tier 2.
+2026-09-08T04:00:00,SOC-CASE-1086,10.0.3.10 (Mail),Medium,Analyst_A,18,No,"Investigated payload, blocked IP."
+2026-09-08T06:00:00,SOC-CASE-1087,10.0.1.5 (Web),Low,Analyst_B,45,No,Isolated host and scanned.
+2026-09-08T08:00:00,SOC-CASE-1088,10.0.1.5 (Web),Low,Analyst_A,88,No,"Investigated payload, blocked IP."
+2026-09-08T10:00:00,SOC-CASE-1089,10.0.1.5 (Web),Low,Analyst_C,45,No,"False positive, closed."
+2026-09-08T12:00:00,SOC-CASE-1090,10.0.3.10 (Mail),Low,Analyst_C,51,No,"False positive, closed."
+2026-09-08T14:00:00,SOC-CASE-1091,10.0.2.50 (UserVLAN),Medium,Analyst_B,29,No,"Investigated payload, blocked IP."
+2026-09-08T16:00:00,SOC-CASE-1092,10.0.3.10 (Mail),Low,Analyst_A,74,No,Isolated host and scanned.
+2026-09-08T18:00:00,SOC-CASE-1093,10.0.2.50 (UserVLAN),Medium,Analyst_C,21,No,"False positive, closed."
+2026-09-08T20:00:00,SOC-CASE-1094,10.0.1.5 (Web),Low,Analyst_B,79,No,Isolated host and scanned.
+2026-09-08T22:00:00,SOC-CASE-1095,10.0.2.50 (UserVLAN),Medium,Analyst_A,31,No,Escalated to Tier 2.
+2026-09-09T00:00:00,SOC-CASE-1096,10.0.2.50 (UserVLAN),Medium,Analyst_A,29,No,Escalated to Tier 2.
+2026-09-09T02:00:00,SOC-CASE-1097,10.0.1.5 (Web),Low,Analyst_A,99,No,"Investigated payload, blocked IP."
+2026-09-09T04:00:00,SOC-CASE-1098,10.0.2.50 (UserVLAN),Low,Analyst_B,119,No,Isolated host and scanned.
+2026-09-09T06:00:00,SOC-CASE-1099,10.0.1.5 (Web),Low,Analyst_B,65,No,Escalated to Tier 2.
+2026-09-09T08:00:00,SOC-CASE-1100,10.0.3.10 (Mail),High,Analyst_B,3,No,No action needed.
+2026-09-09T10:00:00,SOC-CASE-1101,10.0.3.10 (Mail),High,Analyst_B,2,No,Closed as false positive.
+2026-09-09T12:00:00,SOC-CASE-1102,10.0.2.50 (UserVLAN),Medium,Analyst_A,113,No,Isolated host and scanned.
+2026-09-09T14:00:00,SOC-CASE-1103,10.0.1.5 (Web),Low,Analyst_B,76,No,Isolated host and scanned.
+2026-09-09T16:00:00,SOC-CASE-1104,10.0.1.5 (Web),High,Analyst_B,2,No,No action needed.
+2026-09-09T18:00:00,SOC-CASE-1105,10.0.1.5 (Web),Low,Analyst_A,57,No,Escalated to Tier 2.
+2026-09-09T20:00:00,SOC-CASE-1106,10.0.1.5 (Web),Low,Analyst_C,51,No,"False positive, closed."
+2026-09-09T22:00:00,SOC-CASE-1107,10.0.1.5 (Web),Low,Analyst_A,17,No,Isolated host and scanned.
+2026-09-10T00:00:00,SOC-CASE-1108,10.0.2.50 (UserVLAN),Low,Analyst_B,86,No,Escalated to Tier 2.
+2026-09-10T02:00:00,SOC-CASE-1109,10.0.3.10 (Mail),Low,Analyst_B,74,No,Escalated to Tier 2.
+2026-09-10T04:00:00,SOC-CASE-1110,10.0.1.5 (Web),Low,Analyst_C,56,No,"False positive, closed."
+2026-09-10T06:00:00,SOC-CASE-1111,10.0.3.10 (Mail),Low,Analyst_C,37,No,"False positive, closed."
+2026-09-10T08:00:00,SOC-CASE-1112,10.0.1.5 (Web),Low,Analyst_C,60,No,"False positive, closed."
+2026-09-10T10:00:00,SOC-CASE-1113,10.0.2.50 (UserVLAN),Medium,Analyst_C,43,No,"False positive, closed."
+2026-09-10T12:00:00,SOC-CASE-1114,10.0.2.50 (UserVLAN),High,Analyst_A,48,Yes,"Investigated payload, blocked IP."
+2026-09-10T14:00:00,SOC-CASE-1115,10.0.1.5 (Web),Low,Analyst_C,14,No,"False positive, closed."
+2026-09-10T16:00:00,SOC-CASE-1116,10.0.2.50 (UserVLAN),Low,Analyst_C,22,No,"False positive, closed."
+2026-09-10T18:00:00,SOC-CASE-1117,10.0.2.50 (UserVLAN),Low,Analyst_C,15,No,"False positive, closed."
+2026-09-10T20:00:00,SOC-CASE-1118,10.0.1.5 (Web),Critical,Analyst_C,53,No,"False positive, closed."
+2026-09-10T22:00:00,SOC-CASE-1119,10.0.2.50 (UserVLAN),Low,Analyst_B,79,No,Isolated host and scanned.
+2026-09-11T00:00:00,SOC-CASE-1120,10.0.3.10 (Mail),High,Analyst_C,51,No,"False positive, closed."
+2026-09-11T02:00:00,SOC-CASE-1121,10.0.2.50 (UserVLAN),Low,Analyst_A,57,No,Isolated host and scanned.
+2026-09-11T04:00:00,SOC-CASE-1122,10.0.2.50 (UserVLAN),Low,Analyst_C,15,No,"False positive, closed."
+2026-09-11T06:00:00,SOC-CASE-1123,10.0.1.5 (Web),Medium,Analyst_B,85,No,"Investigated payload, blocked IP."
+2026-09-11T08:00:00,SOC-CASE-1124,10.0.2.50 (UserVLAN),Low,Analyst_A,39,No,Isolated host and scanned.
+2026-09-11T10:00:00,SOC-CASE-1125,10.0.2.50 (UserVLAN),Medium,Analyst_A,36,No,"Investigated payload, blocked IP."
+2026-09-11T12:00:00,SOC-CASE-1126,10.0.3.10 (Mail),Medium,Analyst_B,89,No,"Investigated payload, blocked IP."
+2026-09-11T14:00:00,SOC-CASE-1127,10.0.1.5 (Web),Low,Analyst_B,25,No,Escalated to Tier 2.
+2026-09-11T16:00:00,SOC-CASE-1128,10.0.1.5 (Web),High,Analyst_C,48,No,"False positive, closed."
+2026-09-11T18:00:00,SOC-CASE-1129,10.0.2.50 (UserVLAN),Medium,Analyst_C,55,No,"False positive, closed."
+2026-09-11T20:00:00,SOC-CASE-1130,10.0.1.5 (Web),Medium,Analyst_B,94,No,Escalated to Tier 2.
+2026-09-11T22:00:00,SOC-CASE-1131,10.0.2.50 (UserVLAN),Medium,Analyst_B,16,No,"Investigated payload, blocked IP."
+2026-09-12T00:00:00,SOC-CASE-1132,10.0.1.5 (Web),Critical,Analyst_B,2,No,Closed as false positive.
+2026-09-12T02:00:00,SOC-CASE-1133,10.0.1.5 (Web),High,Analyst_C,26,No,"False positive, closed."
+2026-09-12T04:00:00,SOC-CASE-1134,10.0.2.50 (UserVLAN),High,Analyst_C,14,No,"False positive, closed."
+2026-09-12T06:00:00,SOC-CASE-1135,10.0.1.5 (Web),Low,Analyst_C,47,No,"False positive, closed."
+2026-09-12T08:00:00,SOC-CASE-1136,10.0.3.10 (Mail),Low,Analyst_A,110,No,Escalated to Tier 2.
+2026-09-12T10:00:00,SOC-CASE-1137,10.0.3.10 (Mail),Critical,Analyst_B,2,No,Closed as false positive.
+2026-09-12T12:00:00,SOC-CASE-1138,10.0.1.5 (Web),Medium,Analyst_B,75,No,Isolated host and scanned.
+2026-09-12T14:00:00,SOC-CASE-1139,10.0.1.5 (Web),Low,Analyst_B,114,No,Isolated host and scanned.
+2026-09-12T16:00:00,SOC-CASE-1140,10.0.1.5 (Web),Low,Analyst_A,16,No,Escalated to Tier 2.
+2026-09-12T18:00:00,SOC-CASE-1141,10.0.3.10 (Mail),Medium,Analyst_A,99,No,Isolated host and scanned.
+2026-09-12T20:00:00,SOC-CASE-1142,10.0.1.5 (Web),Medium,Analyst_B,101,No,Isolated host and scanned.
+2026-09-12T22:00:00,SOC-CASE-1143,10.0.1.5 (Web),Medium,Analyst_C,17,No,"False positive, closed."
+2026-09-13T00:00:00,SOC-CASE-1144,10.0.1.5 (Web),Critical,Analyst_B,4,No,Routine traffic.
+2026-09-13T02:00:00,SOC-CASE-1145,10.0.1.5 (Web),Medium,Analyst_A,108,No,"Investigated payload, blocked IP."
+2026-09-13T04:00:00,SOC-CASE-1146,10.0.3.10 (Mail),Low,Analyst_A,112,No,"Investigated payload, blocked IP."
+2026-09-13T06:00:00,SOC-CASE-1147,10.0.3.10 (Mail),High,Analyst_C,40,No,"False positive, closed."
+2026-09-13T08:00:00,SOC-CASE-1148,10.0.2.50 (UserVLAN),Critical,Analyst_C,21,No,"False positive, closed."
+2026-09-13T10:00:00,SOC-CASE-1149,10.0.1.5 (Web),Low,Analyst_A,62,No,Isolated host and scanned.
+2026-09-13T12:00:00,SOC-CASE-1150,10.0.2.50 (UserVLAN),High,Analyst_C,43,No,"False positive, closed."
+2026-09-13T14:00:00,SOC-CASE-1151,10.0.3.10 (Mail),Low,Analyst_C,14,No,"False positive, closed."
+2026-09-13T16:00:00,SOC-CASE-1152,10.0.1.5 (Web),Medium,Analyst_B,109,No,Escalated to Tier 2.
+2026-09-13T18:00:00,SOC-CASE-1153,10.0.1.5 (Web),Low,Analyst_C,33,No,"False positive, closed."
+2026-09-13T20:00:00,SOC-CASE-1154,10.0.2.50 (UserVLAN),Low,Analyst_B,117,No,Isolated host and scanned.
+2026-09-13T22:00:00,SOC-CASE-1155,10.0.2.50 (UserVLAN),Medium,Analyst_A,75,No,Escalated to Tier 2.
+2026-09-14T00:00:00,SOC-CASE-1156,10.0.2.50 (UserVLAN),Low,Analyst_B,35,No,Isolated host and scanned.
+2026-09-14T02:00:00,SOC-CASE-1157,10.0.2.50 (UserVLAN),Low,Analyst_A,45,No,"Investigated payload, blocked IP."
+2026-09-14T04:00:00,SOC-CASE-1158,10.0.1.5 (Web),High,Analyst_B,3,No,Closed as false positive.
+2026-09-14T06:00:00,SOC-CASE-1159,10.0.1.5 (Web),Medium,Analyst_B,103,No,Isolated host and scanned.
+2026-09-14T08:00:00,SOC-CASE-1160,10.0.3.10 (Mail),Low,Analyst_B,98,No,Isolated host and scanned.
+2026-09-14T10:00:00,SOC-CASE-1161,10.0.3.10 (Mail),Low,Analyst_B,54,No,"Investigated payload, blocked IP."
+2026-09-14T12:00:00,SOC-CASE-1162,10.0.3.10 (Mail),Critical,Analyst_B,1,No,No action needed.
+2026-09-14T14:00:00,SOC-CASE-1163,10.0.2.50 (UserVLAN),Low,Analyst_A,19,No,Isolated host and scanned.
+2026-09-14T16:00:00,SOC-CASE-1164,10.0.2.50 (UserVLAN),Low,Analyst_C,30,No,"False positive, closed."
+2026-09-14T18:00:00,SOC-CASE-1165,10.0.1.5 (Web),Low,Analyst_C,14,No,"False positive, closed."
+2026-09-14T20:00:00,SOC-CASE-1166,10.0.1.5 (Web),High,Analyst_C,36,No,"False positive, closed."
+2026-09-14T22:00:00,SOC-CASE-1167,10.0.2.50 (UserVLAN),High,Analyst_B,4,No,Closed as false positive.
+2026-09-15T00:00:00,SOC-CASE-1168,10.0.2.50 (UserVLAN),Critical,Analyst_A,23,Yes,Escalated to Tier 2.
+2026-09-15T02:00:00,SOC-CASE-1169,10.0.1.5 (Web),Critical,Analyst_C,48,No,"False positive, closed."
+2026-09-15T04:00:00,SOC-CASE-1170,10.0.1.5 (Web),Low,Analyst_A,60,No,"Investigated payload, blocked IP."
+2026-09-15T06:00:00,SOC-CASE-1171,10.0.3.10 (Mail),Medium,Analyst_C,39,No,"False positive, closed."
+2026-09-15T08:00:00,SOC-CASE-1172,10.0.2.50 (UserVLAN),Low,Analyst_C,31,No,"False positive, closed."
+2026-09-15T10:00:00,SOC-CASE-1173,10.0.3.10 (Mail),Medium,Analyst_A,20,No,Isolated host and scanned.
+2026-09-15T12:00:00,SOC-CASE-1174,10.0.2.50 (UserVLAN),Low,Analyst_B,118,No,Isolated host and scanned.
+2026-09-15T14:00:00,SOC-CASE-1175,10.0.1.5 (Web),Medium,Analyst_C,15,No,"False positive, closed."
+2026-09-15T16:00:00,SOC-CASE-1176,10.0.1.5 (Web),Low,Analyst_C,58,No,"False positive, closed."
+2026-09-15T18:00:00,SOC-CASE-1177,10.0.1.5 (Web),High,Analyst_B,2,No,Closed as false positive.
+2026-09-15T20:00:00,SOC-CASE-1178,10.0.2.50 (UserVLAN),Medium,Analyst_B,43,No,Escalated to Tier 2.
+2026-09-15T22:00:00,SOC-CASE-1179,10.0.1.5 (Web),Low,Analyst_B,39,No,Escalated to Tier 2.
+2026-09-16T00:00:00,SOC-CASE-1180,10.0.1.5 (Web),Critical,Analyst_B,3,No,Closed as false positive.
+2026-09-16T02:00:00,SOC-CASE-1181,10.0.2.50 (UserVLAN),High,Analyst_A,40,Yes,Escalated to Tier 2.
+2026-09-16T04:00:00,SOC-CASE-1182,10.0.1.5 (Web),Low,Analyst_C,15,No,"False positive, closed."
+2026-09-16T06:00:00,SOC-CASE-1183,10.0.2.50 (UserVLAN),High,Analyst_B,4,No,Routine traffic.
+2026-09-16T08:00:00,SOC-CASE-1184,10.0.3.10 (Mail),High,Analyst_A,26,Yes,Isolated host and scanned.
+2026-09-16T10:00:00,SOC-CASE-1185,10.0.3.10 (Mail),Medium,Analyst_A,109,No,"Investigated payload, blocked IP."
+2026-09-16T12:00:00,SOC-CASE-1186,10.0.1.5 (Web),High,Analyst_C,42,No,"False positive, closed."
+2026-09-16T14:00:00,SOC-CASE-1187,10.0.1.5 (Web),Medium,Analyst_C,13,No,"False positive, closed."
+2026-09-16T16:00:00,SOC-CASE-1188,10.0.3.10 (Mail),Medium,Analyst_A,111,No,Escalated to Tier 2.
+2026-09-16T18:00:00,SOC-CASE-1189,10.0.1.5 (Web),Low,Analyst_A,47,No,"Investigated payload, blocked IP."
+2026-09-16T20:00:00,SOC-CASE-1190,10.0.3.10 (Mail),Low,Analyst_A,51,No,Isolated host and scanned.
+2026-09-16T22:00:00,SOC-CASE-1191,10.0.1.5 (Web),Low,Analyst_C,26,No,"False positive, closed."
+2026-09-17T00:00:00,SOC-CASE-1192,10.0.3.10 (Mail),High,Analyst_B,4,No,No action needed.
+2026-09-17T02:00:00,SOC-CASE-1193,10.0.3.10 (Mail),Low,Analyst_A,116,No,Isolated host and scanned.
+2026-09-17T04:00:00,SOC-CASE-1194,10.0.3.10 (Mail),Medium,Analyst_C,31,No,"False positive, closed."
+2026-09-17T06:00:00,SOC-CASE-1195,10.0.1.5 (Web),Low,Analyst_B,31,No,Escalated to Tier 2.
+2026-09-17T08:00:00,SOC-CASE-1196,10.0.1.5 (Web),Medium,Analyst_A,56,No,Isolated host and scanned.
+2026-09-17T10:00:00,SOC-CASE-1197,10.0.1.5 (Web),Medium,Analyst_A,56,No,Escalated to Tier 2.
+2026-09-17T12:00:00,SOC-CASE-1198,10.0.3.10 (Mail),Medium,Analyst_C,18,No,"False positive, closed."
+2026-09-17T14:00:00,SOC-CASE-1199,10.0.1.5 (Web),Low,Analyst_B,78,No,"Investigated payload, blocked IP."
+2026-09-17T16:00:00,SOC-CASE-1200,10.0.3.10 (Mail),High,Analyst_B,1,No,Closed as false positive.
+2026-09-17T18:00:00,SOC-CASE-1201,10.0.1.5 (Web),High,Analyst_B,2,No,No action needed.
+2026-09-17T20:00:00,SOC-CASE-1202,10.0.3.10 (Mail),High,Analyst_C,27,No,"False positive, closed."
+2026-09-17T22:00:00,SOC-CASE-1203,10.0.1.5 (Web),Medium,Analyst_C,40,No,"False positive, closed."
+2026-09-18T00:00:00,SOC-CASE-1204,10.0.1.5 (Web),Medium,Analyst_B,50,No,Isolated host and scanned.
+2026-09-18T02:00:00,SOC-CASE-1205,10.0.3.10 (Mail),High,Analyst_C,33,No,"False positive, closed."
+2026-09-18T04:00:00,SOC-CASE-1206,10.0.1.5 (Web),Low,Analyst_C,37,No,"False positive, closed."
+2026-09-18T06:00:00,SOC-CASE-1207,10.0.1.5 (Web),Low,Analyst_C,13,No,"False positive, closed."
+2026-09-18T08:00:00,SOC-CASE-1208,10.0.1.5 (Web),Low,Analyst_A,108,No,Escalated to Tier 2.
+2026-09-18T10:00:00,SOC-CASE-1209,10.0.1.5 (Web),Low,Analyst_B,82,No,Isolated host and scanned.
+2026-09-18T12:00:00,SOC-CASE-1210,10.0.1.5 (Web),Low,Analyst_B,65,No,Isolated host and scanned.
+2026-09-18T14:00:00,SOC-CASE-1211,10.0.2.50 (UserVLAN),Low,Analyst_A,39,No,Escalated to Tier 2.
+2026-09-18T16:00:00,SOC-CASE-1212,10.0.3.10 (Mail),Low,Analyst_C,17,No,"False positive, closed."
+2026-09-18T18:00:00,SOC-CASE-1213,10.0.1.5 (Web),High,Analyst_C,35,No,"False positive, closed."
+2026-09-18T20:00:00,SOC-CASE-1214,10.0.3.10 (Mail),Medium,Analyst_B,61,No,Isolated host and scanned.
+2026-09-18T22:00:00,SOC-CASE-1215,10.0.1.5 (Web),Low,Analyst_A,53,No,Isolated host and scanned.
+2026-09-19T00:00:00,SOC-CASE-1216,10.0.3.10 (Mail),Medium,Analyst_C,33,No,"False positive, closed."
+2026-09-19T02:00:00,SOC-CASE-1217,10.0.1.5 (Web),Medium,Analyst_C,49,No,"False positive, closed."
+2026-09-19T04:00:00,SOC-CASE-1218,10.0.1.5 (Web),Medium,Analyst_B,17,No,"Investigated payload, blocked IP."
+2026-09-19T06:00:00,SOC-CASE-1219,10.0.1.5 (Web),Medium,Analyst_A,46,No,Isolated host and scanned.
+2026-09-19T08:00:00,SOC-CASE-1220,10.0.1.5 (Web),Medium,Analyst_B,86,No,Isolated host and scanned.
+2026-09-19T10:00:00,SOC-CASE-1221,10.0.1.5 (Web),High,Analyst_B,1,No,Routine traffic.
+2026-09-19T12:00:00,SOC-CASE-1222,10.0.1.5 (Web),High,Analyst_B,4,No,Routine traffic.
+2026-09-19T14:00:00,SOC-CASE-1223,10.0.1.5 (Web),Medium,Analyst_B,72,No,"Investigated payload, blocked IP."
+2026-09-19T16:00:00,SOC-CASE-1224,10.0.1.5 (Web),Medium,Analyst_B,106,No,Isolated host and scanned.
+2026-09-19T18:00:00,SOC-CASE-1225,10.0.2.50 (UserVLAN),Low,Analyst_C,49,No,"False positive, closed."
+2026-09-19T20:00:00,SOC-CASE-1226,10.0.2.50 (UserVLAN),Low,Analyst_A,32,No,Isolated host and scanned.
+2026-09-19T22:00:00,SOC-CASE-1227,10.0.2.50 (UserVLAN),Low,Analyst_C,45,No,"False positive, closed."
+2026-09-20T00:00:00,SOC-CASE-1228,10.0.3.10 (Mail),Low,Analyst_B,28,No,Isolated host and scanned.
+2026-09-20T02:00:00,SOC-CASE-1229,10.0.1.5 (Web),Medium,Analyst_B,48,No,"Investigated payload, blocked IP."
+2026-09-20T04:00:00,SOC-CASE-1230,10.0.2.50 (UserVLAN),Low,Analyst_A,90,No,Escalated to Tier 2.
+2026-09-20T06:00:00,SOC-CASE-1231,10.0.1.5 (Web),Low,Analyst_B,76,No,Isolated host and scanned.
+2026-09-20T08:00:00,SOC-CASE-1232,10.0.2.50 (UserVLAN),Medium,Analyst_C,51,No,"False positive, closed."
+2026-09-20T10:00:00,SOC-CASE-1233,10.0.1.5 (Web),Low,Analyst_B,48,No,Escalated to Tier 2.
+2026-09-20T12:00:00,SOC-CASE-1234,10.0.1.5 (Web),Medium,Analyst_B,66,No,Isolated host and scanned.
+2026-09-20T14:00:00,SOC-CASE-1235,10.0.2.50 (UserVLAN),Medium,Analyst_C,18,No,"False positive, closed."
+2026-09-20T16:00:00,SOC-CASE-1236,10.0.2.50 (UserVLAN),Low,Analyst_A,48,No,Isolated host and scanned.
+2026-09-20T18:00:00,SOC-CASE-1237,10.0.1.5 (Web),Medium,Analyst_C,15,No,"False positive, closed."
+2026-09-20T20:00:00,SOC-CASE-1238,10.0.3.10 (Mail),Medium,Analyst_B,107,No,Isolated host and scanned.
+2026-09-20T22:00:00,SOC-CASE-1239,10.0.1.5 (Web),Medium,Analyst_B,66,No,Isolated host and scanned.
+2026-09-21T00:00:00,SOC-CASE-1240,10.0.1.5 (Web),High,Analyst_A,38,Yes,"Investigated payload, blocked IP."
+2026-09-21T02:00:00,SOC-CASE-1241,10.0.3.10 (Mail),Medium,Analyst_A,45,No,Escalated to Tier 2.
+2026-09-21T04:00:00,SOC-CASE-1242,10.0.1.5 (Web),Low,Analyst_C,42,No,"False positive, closed."
+2026-09-21T06:00:00,SOC-CASE-1243,10.0.2.50 (UserVLAN),Medium,Analyst_A,46,No,"Investigated payload, blocked IP."
+2026-09-21T08:00:00,SOC-CASE-1244,10.0.1.5 (Web),Medium,Analyst_A,84,No,Escalated to Tier 2.
+2026-09-21T10:00:00,SOC-CASE-1245,10.0.1.5 (Web),Low,Analyst_A,118,No,"Investigated payload, blocked IP."
+2026-09-21T12:00:00,SOC-CASE-1246,10.0.1.5 (Web),Medium,Analyst_B,103,No,Isolated host and scanned.
+2026-09-21T14:00:00,SOC-CASE-1247,10.0.1.5 (Web),Low,Analyst_C,53,No,"False positive, closed."
+2026-09-21T16:00:00,SOC-CASE-1248,10.0.1.5 (Web),Low,Analyst_A,75,No,Escalated to Tier 2.
+2026-09-21T18:00:00,SOC-CASE-1249,10.0.1.5 (Web),High,Analyst_C,57,No,"False positive, closed."
+2026-09-21T20:00:00,SOC-CASE-1250,10.0.2.50 (UserVLAN),Medium,Analyst_B,19,No,Isolated host and scanned.
+2026-09-21T22:00:00,SOC-CASE-1251,10.0.2.50 (UserVLAN),Low,Analyst_C,33,No,"False positive, closed."
+2026-09-22T00:00:00,SOC-CASE-1252,10.0.3.10 (Mail),Medium,Analyst_B,86,No,Isolated host and scanned.
+2026-09-22T02:00:00,SOC-CASE-1253,10.0.1.5 (Web),Medium,Analyst_C,59,No,"False positive, closed."
+2026-09-22T04:00:00,SOC-CASE-1254,10.0.3.10 (Mail),Low,Analyst_C,58,No,"False positive, closed."
+2026-09-22T06:00:00,SOC-CASE-1255,10.0.3.10 (Mail),Medium,Analyst_A,15,No,"Investigated payload, blocked IP."
+2026-09-22T08:00:00,SOC-CASE-1256,10.0.3.10 (Mail),Low,Analyst_B,98,No,Isolated host and scanned.
+2026-09-22T10:00:00,SOC-CASE-1257,10.0.3.10 (Mail),Low,Analyst_C,16,No,"False positive, closed."
+2026-09-22T12:00:00,SOC-CASE-1258,10.0.3.10 (Mail),Medium,Analyst_A,72,No,Escalated to Tier 2.
+2026-09-22T14:00:00,SOC-CASE-1259,10.0.1.5 (Web),High,Analyst_C,32,No,"False positive, closed."
+2026-09-22T16:00:00,SOC-CASE-1260,10.0.2.50 (UserVLAN),Low,Analyst_C,21,No,"False positive, closed."
+2026-09-22T18:00:00,SOC-CASE-1261,10.0.3.10 (Mail),Low,Analyst_A,115,No,Escalated to Tier 2.
+2026-09-22T20:00:00,SOC-CASE-1262,10.0.1.5 (Web),Medium,Analyst_B,43,No,Isolated host and scanned.
+2026-09-22T22:00:00,SOC-CASE-1263,10.0.2.50 (UserVLAN),Low,Analyst_A,69,No,Escalated to Tier 2.
+2026-09-23T00:00:00,SOC-CASE-1264,10.0.1.5 (Web),High,Analyst_B,1,No,No action needed.
+2026-09-23T02:00:00,SOC-CASE-1265,10.0.1.5 (Web),Low,Analyst_B,29,No,Isolated host and scanned.
+2026-09-23T04:00:00,SOC-CASE-1266,10.0.3.10 (Mail),Low,Analyst_A,59,No,"Investigated payload, blocked IP."
+2026-09-23T06:00:00,SOC-CASE-1267,10.0.1.5 (Web),High,Analyst_C,54,No,"False positive, closed."
+2026-09-23T08:00:00,SOC-CASE-1268,10.0.1.5 (Web),Medium,Analyst_A,20,No,Escalated to Tier 2.
+2026-09-23T10:00:00,SOC-CASE-1269,10.0.3.10 (Mail),Low,Analyst_A,54,No,Isolated host and scanned.
+2026-09-23T12:00:00,SOC-CASE-1270,10.0.3.10 (Mail),Low,Analyst_A,31,No,Isolated host and scanned.
+2026-09-23T14:00:00,SOC-CASE-1271,10.0.2.50 (UserVLAN),Medium,Analyst_A,54,No,Escalated to Tier 2.
+2026-09-23T16:00:00,SOC-CASE-1272,10.0.1.5 (Web),Low,Analyst_B,65,No,Escalated to Tier 2.
+2026-09-23T18:00:00,SOC-CASE-1273,10.0.1.5 (Web),Low,Analyst_A,17,No,"Investigated payload, blocked IP."
+2026-09-23T20:00:00,SOC-CASE-1274,10.0.2.50 (UserVLAN),High,Analyst_B,1,No,Routine traffic.
+2026-09-23T22:00:00,SOC-CASE-1275,10.0.2.50 (UserVLAN),Low,Analyst_C,52,No,"False positive, closed."
+2026-09-24T00:00:00,SOC-CASE-1276,10.0.1.5 (Web),Low,Analyst_B,29,No,Isolated host and scanned.
+2026-09-24T02:00:00,SOC-CASE-1277,10.0.1.5 (Web),Medium,Analyst_B,114,No,Escalated to Tier 2.
+2026-09-24T04:00:00,SOC-CASE-1278,10.0.1.5 (Web),Low,Analyst_B,117,No,Escalated to Tier 2.
+2026-09-24T06:00:00,SOC-CASE-1279,10.0.3.10 (Mail),Low,Analyst_C,10,No,"False positive, closed."
+2026-09-24T08:00:00,SOC-CASE-1280,10.0.1.5 (Web),Medium,Analyst_A,59,No,Escalated to Tier 2.
+2026-09-24T10:00:00,SOC-CASE-1281,10.0.3.10 (Mail),High,Analyst_C,51,No,"False positive, closed."
+2026-09-24T12:00:00,SOC-CASE-1282,10.0.1.5 (Web),High,Analyst_A,87,Yes,Escalated to Tier 2.
+2026-09-24T14:00:00,SOC-CASE-1283,10.0.2.50 (UserVLAN),Medium,Analyst_A,48,No,"Investigated payload, blocked IP."
+2026-09-24T16:00:00,SOC-CASE-1284,10.0.1.5 (Web),Low,Analyst_A,108,No,"Investigated payload, blocked IP."
+2026-09-24T18:00:00,SOC-CASE-1285,10.0.1.5 (Web),Medium,Analyst_A,62,No,"Investigated payload, blocked IP."
+2026-09-24T20:00:00,SOC-CASE-1286,10.0.1.5 (Web),Medium,Analyst_C,43,No,"False positive, closed."
+2026-09-24T22:00:00,SOC-CASE-1287,10.0.3.10 (Mail),Low,Analyst_B,114,No,Escalated to Tier 2.
+2026-09-25T00:00:00,SOC-CASE-1288,10.0.1.5 (Web),Medium,Analyst_B,91,No,"Investigated payload, blocked IP."
+2026-09-25T02:00:00,SOC-CASE-1289,10.0.1.5 (Web),Low,Analyst_B,38,No,Isolated host and scanned.
+2026-09-25T04:00:00,SOC-CASE-1290,10.0.1.5 (Web),High,Analyst_A,34,Yes,Escalated to Tier 2.
+2026-09-25T06:00:00,SOC-CASE-1291,10.0.1.5 (Web),High,Analyst_A,73,Yes,"Investigated payload, blocked IP."
+2026-09-25T08:00:00,SOC-CASE-1292,10.0.1.5 (Web),Low,Analyst_C,49,No,"False positive, closed."
+2026-09-25T10:00:00,SOC-CASE-1293,10.0.2.50 (UserVLAN),Medium,Analyst_B,80,No,Escalated to Tier 2.
+2026-09-25T12:00:00,SOC-CASE-1294,10.0.2.50 (UserVLAN),Medium,Analyst_A,115,No,Escalated to Tier 2.
+2026-09-25T14:00:00,SOC-CASE-1295,10.0.3.10 (Mail),Medium,Analyst_C,17,No,"False positive, closed."
+2026-09-25T16:00:00,SOC-CASE-1296,10.0.1.5 (Web),Low,Analyst_B,79,No,Escalated to Tier 2.
+2026-09-25T18:00:00,SOC-CASE-1297,10.0.2.50 (UserVLAN),Low,Analyst_B,111,No,Escalated to Tier 2.
+2026-09-25T20:00:00,SOC-CASE-1298,10.0.3.10 (Mail),Low,Analyst_B,111,No,"Investigated payload, blocked IP."
+2026-09-25T22:00:00,SOC-CASE-1299,10.0.1.5 (Web),Low,Analyst_A,73,No,"Investigated payload, blocked IP."
+2026-09-26T00:00:00,SOC-CASE-1300,10.0.3.10 (Mail),Medium,Analyst_C,33,No,"False positive, closed."
+2026-09-26T02:00:00,SOC-CASE-1301,10.0.1.5 (Web),High,Analyst_A,93,Yes,Escalated to Tier 2.
+2026-09-26T04:00:00,SOC-CASE-1302,10.0.1.5 (Web),Low,Analyst_B,44,No,Escalated to Tier 2.
+2026-09-26T06:00:00,SOC-CASE-1303,10.0.1.5 (Web),Low,Analyst_A,82,No,Isolated host and scanned.
+2026-09-26T08:00:00,SOC-CASE-1304,10.0.2.50 (UserVLAN),High,Analyst_B,3,No,Routine traffic.
+2026-09-26T10:00:00,SOC-CASE-1305,10.0.2.50 (UserVLAN),Low,Analyst_B,115,No,Escalated to Tier 2.
+2026-09-26T12:00:00,SOC-CASE-1306,10.0.3.10 (Mail),Low,Analyst_B,88,No,Isolated host and scanned.
+2026-09-26T14:00:00,SOC-CASE-1307,10.0.1.12 (DB),Low,Analyst_A,120,No,Escalated to Tier 2.
+2026-09-26T16:00:00,SOC-CASE-1308,10.0.3.10 (Mail),Critical,Analyst_C,14,No,"False positive, closed."
+2026-09-26T18:00:00,SOC-CASE-1309,10.0.3.10 (Mail),Medium,Analyst_C,48,No,"False positive, closed."
+2026-09-26T20:00:00,SOC-CASE-1310,10.0.1.5 (Web),High,Analyst_A,18,Yes,Isolated host and scanned.
+2026-09-26T22:00:00,SOC-CASE-1311,10.0.1.5 (Web),Low,Analyst_B,42,No,"Investigated payload, blocked IP."
+2026-09-27T00:00:00,SOC-CASE-1312,10.0.2.50 (UserVLAN),Medium,Analyst_C,17,No,"False positive, closed."
+2026-09-27T02:00:00,SOC-CASE-1313,10.0.1.5 (Web),High,Analyst_C,56,No,"False positive, closed."
+2026-09-27T04:00:00,SOC-CASE-1314,10.0.3.10 (Mail),Low,Analyst_B,107,No,"Investigated payload, blocked IP."
+2026-09-27T06:00:00,SOC-CASE-1315,10.0.1.12 (DB),Low,Analyst_B,32,No,Isolated host and scanned.
+2026-09-27T08:00:00,SOC-CASE-1316,10.0.1.5 (Web),Low,Analyst_B,99,No,"Investigated payload, blocked IP."
+2026-09-27T10:00:00,SOC-CASE-1317,10.0.1.5 (Web),Medium,Analyst_B,106,No,"Investigated payload, blocked IP."
+2026-09-27T12:00:00,SOC-CASE-1318,10.0.2.50 (UserVLAN),Low,Analyst_C,59,No,"False positive, closed."
+2026-09-27T14:00:00,SOC-CASE-1319,10.0.1.5 (Web),Low,Analyst_C,28,No,"False positive, closed."
+2026-09-27T16:00:00,SOC-CASE-1320,10.0.3.10 (Mail),High,Analyst_C,22,No,"False positive, closed."
+2026-09-27T18:00:00,SOC-CASE-1321,10.0.2.50 (UserVLAN),High,Analyst_B,3,No,No action needed.
+2026-09-27T20:00:00,SOC-CASE-1322,10.0.1.12 (DB),Medium,Analyst_C,57,No,"False positive, closed."
+2026-09-27T22:00:00,SOC-CASE-1323,10.0.1.5 (Web),Low,Analyst_A,37,No,Escalated to Tier 2.
+2026-09-28T00:00:00,SOC-CASE-1324,10.0.2.50 (UserVLAN),High,Analyst_A,36,Yes,Isolated host and scanned.
+2026-09-28T02:00:00,SOC-CASE-1325,10.0.1.5 (Web),Medium,Analyst_B,74,No,Isolated host and scanned.
+2026-09-28T04:00:00,SOC-CASE-1326,10.0.2.50 (UserVLAN),Low,Analyst_B,95,No,"Investigated payload, blocked IP."
+2026-09-28T06:00:00,SOC-CASE-1327,10.0.3.10 (Mail),Medium,Analyst_B,47,No,Escalated to Tier 2.
+2026-09-28T08:00:00,SOC-CASE-1328,10.0.1.5 (Web),Low,Analyst_B,62,No,Isolated host and scanned.
+2026-09-28T10:00:00,SOC-CASE-1329,10.0.1.5 (Web),Low,Analyst_A,106,No,"Investigated payload, blocked IP."
+2026-09-28T12:00:00,SOC-CASE-1330,10.0.1.5 (Web),Medium,Analyst_A,104,No,Escalated to Tier 2.
+2026-09-28T14:00:00,SOC-CASE-1331,10.0.1.5 (Web),Medium,Analyst_C,40,No,"False positive, closed."
+2026-09-28T16:00:00,SOC-CASE-1332,10.0.1.5 (Web),Low,Analyst_B,73,No,Isolated host and scanned.
+2026-09-28T18:00:00,SOC-CASE-1333,10.0.1.5 (Web),High,Analyst_C,41,No,"False positive, closed."
+2026-09-28T20:00:00,SOC-CASE-1334,10.0.3.10 (Mail),High,Analyst_B,3,No,Routine traffic.
+2026-09-28T22:00:00,SOC-CASE-1335,10.0.2.50 (UserVLAN),Medium,Analyst_C,10,No,"False positive, closed."
+2026-09-29T00:00:00,SOC-CASE-1336,10.0.1.5 (Web),High,Analyst_A,114,Yes,Escalated to Tier 2.
+2026-09-29T02:00:00,SOC-CASE-1337,10.0.2.50 (UserVLAN),Medium,Analyst_C,48,No,"False positive, closed."
+2026-09-29T04:00:00,SOC-CASE-1338,10.0.2.50 (UserVLAN),Medium,Analyst_A,117,No,Isolated host and scanned.
+2026-09-29T06:00:00,SOC-CASE-1339,10.0.3.10 (Mail),Low,Analyst_A,111,No,Escalated to Tier 2.
+2026-09-29T08:00:00,SOC-CASE-1340,10.0.3.10 (Mail),Low,Analyst_A,120,No,"Investigated payload, blocked IP."
+2026-09-29T10:00:00,SOC-CASE-1341,10.0.2.50 (UserVLAN),High,Analyst_A,114,Yes,Escalated to Tier 2.
+2026-09-29T12:00:00,SOC-CASE-1342,10.0.1.5 (Web),Critical,Analyst_C,44,No,"False positive, closed."
+2026-09-29T14:00:00,SOC-CASE-1343,10.0.2.50 (UserVLAN),Low,Analyst_A,77,No,Escalated to Tier 2.
+2026-09-29T16:00:00,SOC-CASE-1344,10.0.1.5 (Web),High,Analyst_C,16,No,"False positive, closed."
+2026-09-29T18:00:00,SOC-CASE-1345,10.0.1.5 (Web),Low,Analyst_C,37,No,"False positive, closed."
+2026-09-29T20:00:00,SOC-CASE-1346,10.0.3.10 (Mail),Low,Analyst_C,29,No,"False positive, closed."
+2026-09-29T22:00:00,SOC-CASE-1347,10.0.1.5 (Web),Medium,Analyst_C,32,No,"False positive, closed."
+2026-09-30T00:00:00,SOC-CASE-1348,10.0.3.10 (Mail),Low,Analyst_C,40,No,"False positive, closed."
+2026-09-30T02:00:00,SOC-CASE-1349,10.0.2.50 (UserVLAN),Low,Analyst_C,43,No,"False positive, closed."
+2026-09-30T04:00:00,SOC-CASE-1350,10.0.1.5 (Web),Low,Analyst_C,13,No,"False positive, closed."
+2026-09-30T06:00:00,SOC-CASE-1351,10.0.1.5 (Web),Low,Analyst_C,23,No,"False positive, closed."
+2026-09-30T08:00:00,SOC-CASE-1352,10.0.2.50 (UserVLAN),Low,Analyst_C,16,No,"False positive, closed."
+2026-09-30T10:00:00,SOC-CASE-1353,10.0.3.10 (Mail),Low,Analyst_C,18,No,"False positive, closed."
+2026-09-30T12:00:00,SOC-CASE-1354,10.0.3.10 (Mail),Medium,Analyst_A,48,No,"Investigated payload, blocked IP."
+2026-09-30T14:00:00,SOC-CASE-1355,10.0.1.5 (Web),High,Analyst_B,3,No,Routine traffic.
+2026-09-30T16:00:00,SOC-CASE-1356,10.0.1.5 (Web),Medium,Analyst_C,58,No,"False positive, closed."
+2026-09-30T18:00:00,SOC-CASE-1357,10.0.2.50 (UserVLAN),High,Analyst_C,58,No,"False positive, closed."
+2026-09-30T20:00:00,SOC-CASE-1358,10.0.1.5 (Web),Low,Analyst_C,24,No,"False positive, closed."
+2026-09-30T22:00:00,SOC-CASE-1359,10.0.1.5 (Web),Low,Analyst_C,51,No,"False positive, closed."
+2026-10-01T00:00:00,SOC-CASE-1360,10.0.2.50 (UserVLAN),Critical,Analyst_A,41,Yes,Isolated host and scanned.
+2026-10-01T02:00:00,SOC-CASE-1361,10.0.1.5 (Web),Low,Analyst_B,112,No,Escalated to Tier 2.
+2026-10-01T04:00:00,SOC-CASE-1362,10.0.3.10 (Mail),Medium,Analyst_B,94,No,"Investigated payload, blocked IP."
+2026-10-01T06:00:00,SOC-CASE-1363,10.0.3.10 (Mail),Medium,Analyst_B,74,No,Escalated to Tier 2.
+2026-10-01T08:00:00,SOC-CASE-1364,10.0.2.50 (UserVLAN),Medium,Analyst_C,10,No,"False positive, closed."
+2026-10-01T10:00:00,SOC-CASE-1365,10.0.1.5 (Web),Low,Analyst_A,99,No,"Investigated payload, blocked IP."
+2026-10-01T12:00:00,SOC-CASE-1366,10.0.1.5 (Web),Low,Analyst_A,15,No,"Investigated payload, blocked IP."
+2026-10-01T14:00:00,SOC-CASE-1367,10.0.1.5 (Web),Low,Analyst_B,61,No,Escalated to Tier 2.
+2026-10-01T16:00:00,SOC-CASE-1368,10.0.3.10 (Mail),Critical,Analyst_A,95,Yes,Escalated to Tier 2.
+2026-10-01T18:00:00,SOC-CASE-1369,10.0.1.5 (Web),Medium,Analyst_A,113,No,Isolated host and scanned.
+2026-10-01T20:00:00,SOC-CASE-1370,10.0.1.5 (Web),Low,Analyst_B,59,No,Escalated to Tier 2.
+2026-10-01T22:00:00,SOC-CASE-1371,10.0.3.10 (Mail),Medium,Analyst_C,22,No,"False positive, closed."
+2026-10-02T00:00:00,SOC-CASE-1372,10.0.3.10 (Mail),Low,Analyst_A,60,No,Escalated to Tier 2.
+2026-10-02T02:00:00,SOC-CASE-1373,10.0.1.5 (Web),Medium,Analyst_C,30,No,"False positive, closed."
+2026-10-02T04:00:00,SOC-CASE-1374,10.0.2.50 (UserVLAN),Low,Analyst_B,46,No,Escalated to Tier 2.
+2026-10-02T06:00:00,SOC-CASE-1375,10.0.2.50 (UserVLAN),Medium,Analyst_C,16,No,"False positive, closed."
+2026-10-02T08:00:00,SOC-CASE-1376,10.0.2.50 (UserVLAN),Low,Analyst_A,62,No,"Investigated payload, blocked IP."
+2026-10-02T10:00:00,SOC-CASE-1377,10.0.3.10 (Mail),Low,Analyst_C,12,No,"False positive, closed."
+2026-10-02T12:00:00,SOC-CASE-1378,10.0.1.5 (Web),Low,Analyst_B,52,No,Escalated to Tier 2.
+2026-10-02T14:00:00,SOC-CASE-1379,10.0.1.5 (Web),Low,Analyst_B,35,No,Escalated to Tier 2.
+2026-10-02T16:00:00,SOC-CASE-1380,10.0.3.10 (Mail),Low,Analyst_C,37,No,"False positive, closed."
+2026-10-02T18:00:00,SOC-CASE-1381,10.0.1.5 (Web),Low,Analyst_C,12,No,"False positive, closed."
+2026-10-02T20:00:00,SOC-CASE-1382,10.0.2.50 (UserVLAN),Low,Analyst_A,85,No,Escalated to Tier 2.
+2026-10-02T22:00:00,SOC-CASE-1383,10.0.2.50 (UserVLAN),Low,Analyst_C,34,No,"False positive, closed."
+2026-10-03T00:00:00,SOC-CASE-1384,10.0.1.5 (Web),Medium,Analyst_A,27,No,Isolated host and scanned.
+2026-10-03T02:00:00,SOC-CASE-1385,10.0.1.5 (Web),Low,Analyst_A,91,No,Escalated to Tier 2.
+2026-10-03T04:00:00,SOC-CASE-1386,10.0.1.5 (Web),Low,Analyst_B,15,No,"Investigated payload, blocked IP."
+2026-10-03T06:00:00,SOC-CASE-1387,10.0.1.5 (Web),Low,Analyst_B,114,No,"Investigated payload, blocked IP."
+2026-10-03T08:00:00,SOC-CASE-1388,10.0.1.5 (Web),Medium,Analyst_C,43,No,"False positive, closed."
+2026-10-03T10:00:00,SOC-CASE-1389,10.0.3.10 (Mail),Medium,Analyst_C,43,No,"False positive, closed."
+2026-10-03T12:00:00,SOC-CASE-1390,10.0.1.5 (Web),Medium,Analyst_B,70,No,"Investigated payload, blocked IP."
+2026-10-03T14:00:00,SOC-CASE-1391,10.0.1.5 (Web),Medium,Analyst_C,38,No,"False positive, closed."
+2026-10-03T16:00:00,SOC-CASE-1392,10.0.1.5 (Web),Medium,Analyst_A,81,No,"Investigated payload, blocked IP."
+2026-10-03T18:00:00,SOC-CASE-1393,10.0.2.50 (UserVLAN),High,Analyst_B,4,No,Routine traffic.
+2026-10-03T20:00:00,SOC-CASE-1394,10.0.1.5 (Web),Low,Analyst_B,44,No,Escalated to Tier 2.
+2026-10-03T22:00:00,SOC-CASE-1395,10.0.2.50 (UserVLAN),Low,Analyst_C,42,No,"False positive, closed."
+2026-10-04T00:00:00,SOC-CASE-1396,10.0.1.12 (DB),Low,Analyst_B,19,No,"Investigated payload, blocked IP."
+2026-10-04T02:00:00,SOC-CASE-1397,10.0.2.50 (UserVLAN),Medium,Analyst_A,20,No,"Investigated payload, blocked IP."
+2026-10-04T04:00:00,SOC-CASE-1398,10.0.3.10 (Mail),Low,Analyst_A,68,No,Escalated to Tier 2.
+2026-10-04T06:00:00,SOC-CASE-1399,10.0.3.10 (Mail),High,Analyst_A,87,Yes,Isolated host and scanned.
+2026-10-04T08:00:00,SOC-CASE-1400,10.0.1.12 (DB),Medium,Analyst_A,33,No,Escalated to Tier 2.
+2026-10-04T10:00:00,SOC-CASE-1401,10.0.1.5 (Web),Low,Analyst_C,11,No,"False positive, closed."
+2026-10-04T12:00:00,SOC-CASE-1402,10.0.1.5 (Web),Medium,Analyst_C,51,No,"False positive, closed."
+2026-10-04T14:00:00,SOC-CASE-1403,10.0.3.10 (Mail),Medium,Analyst_C,17,No,"False positive, closed."
+2026-10-04T16:00:00,SOC-CASE-1404,10.0.1.5 (Web),Low,Analyst_A,24,No,"Investigated payload, blocked IP."
+2026-10-04T18:00:00,SOC-CASE-1405,10.0.1.5 (Web),High,Analyst_B,3,No,Closed as false positive.
+2026-10-04T20:00:00,SOC-CASE-1406,10.0.3.10 (Mail),Low,Analyst_C,56,No,"False positive, closed."
+2026-10-04T22:00:00,SOC-CASE-1407,10.0.3.10 (Mail),Low,Analyst_B,88,No,Escalated to Tier 2.
+2026-10-05T00:00:00,SOC-CASE-1408,10.0.2.50 (UserVLAN),Low,Analyst_C,21,No,"False positive, closed."
+2026-10-05T02:00:00,SOC-CASE-1409,10.0.1.5 (Web),High,Analyst_C,38,No,"False positive, closed."
+2026-10-05T04:00:00,SOC-CASE-1410,10.0.2.50 (UserVLAN),Medium,Analyst_C,34,No,"False positive, closed."
+2026-10-05T06:00:00,SOC-CASE-1411,10.0.2.50 (UserVLAN),Medium,Analyst_B,18,No,"Investigated payload, blocked IP."
+2026-10-05T08:00:00,SOC-CASE-1412,10.0.2.50 (UserVLAN),Low,Analyst_A,61,No,Escalated to Tier 2.
+2026-10-05T10:00:00,SOC-CASE-1413,10.0.1.5 (Web),Medium,Analyst_C,21,No,"False positive, closed."
+2026-10-05T12:00:00,SOC-CASE-1414,10.0.2.50 (UserVLAN),Medium,Analyst_B,103,No,Isolated host and scanned.
+2026-10-05T14:00:00,SOC-CASE-1415,10.0.1.5 (Web),Low,Analyst_A,69,No,Isolated host and scanned.
+2026-10-05T16:00:00,SOC-CASE-1416,10.0.2.50 (UserVLAN),High,Analyst_B,4,No,Closed as false positive.
+2026-10-05T18:00:00,SOC-CASE-1417,10.0.2.50 (UserVLAN),Low,Analyst_C,38,No,"False positive, closed."
+2026-10-05T20:00:00,SOC-CASE-1418,10.0.1.5 (Web),Medium,Analyst_B,98,No,Escalated to Tier 2.
+2026-10-05T22:00:00,SOC-CASE-1419,10.0.2.50 (UserVLAN),Low,Analyst_B,66,No,"Investigated payload, blocked IP."
+2026-10-06T00:00:00,SOC-CASE-1420,10.0.3.10 (Mail),Low,Analyst_B,17,No,Isolated host and scanned.
+2026-10-06T02:00:00,SOC-CASE-1421,10.0.1.5 (Web),High,Analyst_A,66,Yes,"Investigated payload, blocked IP."
+2026-10-06T04:00:00,SOC-CASE-1422,10.0.1.5 (Web),Medium,Analyst_C,24,No,"False positive, closed."
+2026-10-06T06:00:00,SOC-CASE-1423,10.0.1.5 (Web),High,Analyst_A,70,Yes,"Investigated payload, blocked IP."
+2026-10-06T08:00:00,SOC-CASE-1424,10.0.2.50 (UserVLAN),Low,Analyst_B,25,No,Escalated to Tier 2.
+2026-10-06T10:00:00,SOC-CASE-1425,10.0.1.5 (Web),Low,Analyst_A,115,No,Isolated host and scanned.
+2026-10-06T12:00:00,SOC-CASE-1426,10.0.2.50 (UserVLAN),High,Analyst_C,41,No,"False positive, closed."
+2026-10-06T14:00:00,SOC-CASE-1427,10.0.1.5 (Web),Medium,Analyst_B,32,No,Isolated host and scanned.
+2026-10-06T16:00:00,SOC-CASE-1428,10.0.1.5 (Web),High,Analyst_A,66,Yes,Isolated host and scanned.
+2026-10-06T18:00:00,SOC-CASE-1429,10.0.3.10 (Mail),High,Analyst_B,4,No,Closed as false positive.
+2026-10-06T20:00:00,SOC-CASE-1430,10.0.3.10 (Mail),Medium,Analyst_B,115,No,"Investigated payload, blocked IP."
+2026-10-06T22:00:00,SOC-CASE-1431,10.0.3.10 (Mail),Low,Analyst_C,31,No,"False positive, closed."
+2026-10-07T00:00:00,SOC-CASE-1432,10.0.1.5 (Web),Low,Analyst_C,26,No,"False positive, closed."
+2026-10-07T02:00:00,SOC-CASE-1433,10.0.1.5 (Web),High,Analyst_A,109,Yes,"Investigated payload, blocked IP."
+2026-10-07T04:00:00,SOC-CASE-1434,10.0.2.50 (UserVLAN),Low,Analyst_B,42,No,Escalated to Tier 2.
+2026-10-07T06:00:00,SOC-CASE-1435,10.0.2.50 (UserVLAN),Low,Analyst_A,18,No,"Investigated payload, blocked IP."
+2026-10-07T08:00:00,SOC-CASE-1436,10.0.2.50 (UserVLAN),High,Analyst_A,115,Yes,"Investigated payload, blocked IP."
+2026-10-07T10:00:00,SOC-CASE-1437,10.0.2.50 (UserVLAN),Medium,Analyst_B,80,No,"Investigated payload, blocked IP."
+2026-10-07T12:00:00,SOC-CASE-1438,10.0.1.5 (Web),Critical,Analyst_C,16,No,"False positive, closed."
+2026-10-07T14:00:00,SOC-CASE-1439,10.0.1.5 (Web),High,Analyst_C,18,No,"False positive, closed."
+2026-10-07T16:00:00,SOC-CASE-1440,10.0.3.10 (Mail),Low,Analyst_A,30,No,Isolated host and scanned.
+2026-10-07T18:00:00,SOC-CASE-1441,10.0.1.5 (Web),Low,Analyst_C,22,No,"False positive, closed."
+2026-10-07T20:00:00,SOC-CASE-1442,10.0.1.5 (Web),Medium,Analyst_A,62,No,Escalated to Tier 2.
+2026-10-07T22:00:00,SOC-CASE-1443,10.0.1.5 (Web),High,Analyst_C,29,No,"False positive, closed."
+2026-10-08T00:00:00,SOC-CASE-1444,10.0.1.5 (Web),Low,Analyst_C,18,No,"False positive, closed."
+2026-10-08T02:00:00,SOC-CASE-1445,10.0.1.5 (Web),Low,Analyst_A,37,No,Escalated to Tier 2.
+2026-10-08T04:00:00,SOC-CASE-1446,10.0.1.5 (Web),Low,Analyst_C,37,No,"False positive, closed."
+2026-10-08T06:00:00,SOC-CASE-1447,10.0.2.50 (UserVLAN),Low,Analyst_C,28,No,"False positive, closed."
+2026-10-08T08:00:00,SOC-CASE-1448,10.0.1.5 (Web),Medium,Analyst_A,107,No,"Investigated payload, blocked IP."
+2026-10-08T10:00:00,SOC-CASE-1449,10.0.3.10 (Mail),Low,Analyst_C,28,No,"False positive, closed."
+2026-10-08T12:00:00,SOC-CASE-1450,10.0.2.50 (UserVLAN),Low,Analyst_B,16,No,Isolated host and scanned.
+2026-10-08T14:00:00,SOC-CASE-1451,10.0.1.5 (Web),Low,Analyst_C,14,No,"False positive, closed."
+2026-10-08T16:00:00,SOC-CASE-1452,10.0.2.50 (UserVLAN),Low,Analyst_B,91,No,"Investigated payload, blocked IP."
+2026-10-08T18:00:00,SOC-CASE-1453,10.0.1.5 (Web),Low,Analyst_A,36,No,"Investigated payload, blocked IP."
+2026-10-08T20:00:00,SOC-CASE-1454,10.0.2.50 (UserVLAN),High,Analyst_A,97,Yes,"Investigated payload, blocked IP."
+2026-10-08T22:00:00,SOC-CASE-1455,10.0.1.5 (Web),Medium,Analyst_B,78,No,"Investigated payload, blocked IP."
+2026-10-09T00:00:00,SOC-CASE-1456,10.0.1.5 (Web),Low,Analyst_B,25,No,"Investigated payload, blocked IP."
+2026-10-09T02:00:00,SOC-CASE-1457,10.0.1.5 (Web),Low,Analyst_A,50,No,Isolated host and scanned.
+2026-10-09T04:00:00,SOC-CASE-1458,10.0.1.5 (Web),Medium,Analyst_C,45,No,"False positive, closed."
+2026-10-09T06:00:00,SOC-CASE-1459,10.0.1.12 (DB),Medium,Analyst_B,64,No,Isolated host and scanned.
+2026-10-09T08:00:00,SOC-CASE-1460,10.0.2.50 (UserVLAN),Medium,Analyst_C,46,No,"False positive, closed."
+2026-10-09T10:00:00,SOC-CASE-1461,10.0.1.5 (Web),High,Analyst_C,25,No,"False positive, closed."
+2026-10-09T12:00:00,SOC-CASE-1462,10.0.2.50 (UserVLAN),Low,Analyst_C,19,No,"False positive, closed."
+2026-10-09T14:00:00,SOC-CASE-1463,10.0.1.5 (Web),Low,Analyst_B,32,No,Escalated to Tier 2.
+2026-10-09T16:00:00,SOC-CASE-1464,10.0.1.5 (Web),Low,Analyst_B,116,No,Isolated host and scanned.
+2026-10-09T18:00:00,SOC-CASE-1465,10.0.1.5 (Web),Medium,Analyst_B,77,No,Isolated host and scanned.
+2026-10-09T20:00:00,SOC-CASE-1466,10.0.2.50 (UserVLAN),High,Analyst_A,78,Yes,Isolated host and scanned.
+2026-10-09T22:00:00,SOC-CASE-1467,10.0.1.5 (Web),Low,Analyst_C,27,No,"False positive, closed."
+2026-10-10T00:00:00,SOC-CASE-1468,10.0.1.5 (Web),Medium,Analyst_C,12,No,"False positive, closed."
+2026-10-10T02:00:00,SOC-CASE-1469,10.0.3.10 (Mail),High,Analyst_A,84,Yes,Escalated to Tier 2.
+2026-10-10T04:00:00,SOC-CASE-1470,10.0.1.5 (Web),High,Analyst_A,41,Yes,"Investigated payload, blocked IP."
+2026-10-10T06:00:00,SOC-CASE-1471,10.0.3.10 (Mail),Low,Analyst_A,67,No,"Investigated payload, blocked IP."
+2026-10-10T08:00:00,SOC-CASE-1472,10.0.1.5 (Web),Low,Analyst_C,16,No,"False positive, closed."
+2026-10-10T10:00:00,SOC-CASE-1473,10.0.3.10 (Mail),Medium,Analyst_C,60,No,"False positive, closed."
+2026-10-10T12:00:00,SOC-CASE-1474,10.0.2.50 (UserVLAN),Medium,Analyst_A,91,No,Escalated to Tier 2.
+2026-10-10T14:00:00,SOC-CASE-1475,10.0.3.10 (Mail),Low,Analyst_C,60,No,"False positive, closed."
+2026-10-10T16:00:00,SOC-CASE-1476,10.0.2.50 (UserVLAN),Medium,Analyst_A,92,No,Escalated to Tier 2.
+2026-10-10T18:00:00,SOC-CASE-1477,10.0.1.5 (Web),Medium,Analyst_B,55,No,"Investigated payload, blocked IP."
+2026-10-10T20:00:00,SOC-CASE-1478,10.0.1.5 (Web),Low,Analyst_C,40,No,"False positive, closed."
+2026-10-10T22:00:00,SOC-CASE-1479,10.0.2.50 (UserVLAN),Medium,Analyst_C,27,No,"False positive, closed."
+2026-10-11T00:00:00,SOC-CASE-1480,10.0.2.50 (UserVLAN),High,Analyst_C,58,No,"False positive, closed."
+2026-10-11T02:00:00,SOC-CASE-1481,10.0.2.50 (UserVLAN),Low,Analyst_B,26,No,"Investigated payload, blocked IP."
+2026-10-11T04:00:00,SOC-CASE-1482,10.0.1.5 (Web),Low,Analyst_A,39,No,Escalated to Tier 2.
+2026-10-11T06:00:00,SOC-CASE-1483,10.0.1.5 (Web),Low,Analyst_C,42,No,"False positive, closed."
+2026-10-11T08:00:00,SOC-CASE-1484,10.0.1.5 (Web),Critical,Analyst_C,24,No,"False positive, closed."
+2026-10-11T10:00:00,SOC-CASE-1485,10.0.2.50 (UserVLAN),Medium,Analyst_C,19,No,"False positive, closed."
+2026-10-11T12:00:00,SOC-CASE-1486,10.0.1.5 (Web),High,Analyst_B,4,No,Closed as false positive.
+2026-10-11T14:00:00,SOC-CASE-1487,10.0.3.10 (Mail),Critical,Analyst_B,3,No,Routine traffic.
+2026-10-11T16:00:00,SOC-CASE-1488,10.0.2.50 (UserVLAN),Medium,Analyst_A,55,No,Escalated to Tier 2.
+2026-10-11T18:00:00,SOC-CASE-1489,10.0.1.5 (Web),Low,Analyst_B,31,No,"Investigated payload, blocked IP."
+2026-10-11T20:00:00,SOC-CASE-1490,10.0.1.12 (DB),Low,Analyst_A,70,No,Escalated to Tier 2.
+2026-10-11T22:00:00,SOC-CASE-1491,10.0.1.5 (Web),Low,Analyst_C,48,No,"False positive, closed."
+2026-10-12T00:00:00,SOC-CASE-1492,10.0.2.50 (UserVLAN),Low,Analyst_A,113,No,Escalated to Tier 2.
+2026-10-12T02:00:00,SOC-CASE-1493,10.0.1.5 (Web),Critical,Analyst_A,71,Yes,Escalated to Tier 2.
+2026-10-12T04:00:00,SOC-CASE-1494,10.0.1.5 (Web),Low,Analyst_B,25,No,Escalated to Tier 2.
+2026-10-12T06:00:00,SOC-CASE-1495,10.0.2.50 (UserVLAN),Low,Analyst_A,32,No,Escalated to Tier 2.
+2026-10-12T08:00:00,SOC-CASE-1496,10.0.2.50 (UserVLAN),Medium,Analyst_B,31,No,"Investigated payload, blocked IP."
+2026-10-12T10:00:00,SOC-CASE-1497,10.0.2.50 (UserVLAN),Low,Analyst_B,110,No,Isolated host and scanned.
+2026-10-12T12:00:00,SOC-CASE-1498,10.0.3.10 (Mail),Low,Analyst_B,65,No,"Investigated payload, blocked IP."
+2026-10-12T14:00:00,SOC-CASE-1499,10.0.3.10 (Mail),Medium,Analyst_B,71,No,"Investigated payload, blocked IP."

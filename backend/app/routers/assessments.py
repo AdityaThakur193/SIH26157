@@ -1,140 +1,220 @@
 from fastapi import APIRouter, HTTPException
 from app.models.schemas import NationalOverviewResponse, CSESummary, CSEDetailResponse, DimensionMetric
+from app.services.storage.vectorstore import VectorStoreEngine
+from app.services.scoring.threat_score import ThreatScoringEngine
+from app.services.scoring.anomaly_engine import AnomalyEngine
+from app.services.scoring.asset_exposure import AssetExposureEngine
+from app.services.scoring.peer_variance import PeerVarianceEngine
+from app.services.ingestion.hash_verifier import update_entity_score, get_all_entities, get_entity_name
+import os
+import json
+from datetime import datetime
 
 router = APIRouter(prefix="/api/v1/assessments", tags=["Assessments"])
+vectorstore = VectorStoreEngine()
+scoring_engine = ThreatScoringEngine()
+anomaly_engine = AnomalyEngine()
+asset_engine = AssetExposureEngine()
+peer_engine = PeerVarianceEngine()
+
+def _compute_fidelity(raw_logs, dedup_logs, clusters):
+    """Smart Alert Fidelity scoring that adapts to data type."""
+    noise_reduction = 0
+    if raw_logs > 0:
+        noise_reduction = (1 - (dedup_logs / raw_logs)) * 100
+    
+    # Check if data is primarily SOC case records (unique per case)
+    soc_count = sum(1 for c in clusters if c.event_type == "SOC_CASE_RECORD")
+    is_soc_data = soc_count > len(clusters) * 0.5
+    
+    if is_soc_data:
+        # SOC case records are inherently unique — 1:1 ratio is expected and correct
+        if noise_reduction < 5:
+            return {
+                "status_label": "VERIFIED",
+                "status_color": "green",
+                "evaluation_metric": "Case record integrity check",
+                "fidelity_gap": f"{raw_logs} unique case records validated — no duplicate submissions",
+                "domain_code": "FID-06",
+                "findings_count": 0
+            }
+        else:
+            return {
+                "status_label": "DUPLICATES DETECTED",
+                "status_color": "yellow",
+                "evaluation_metric": "Case record integrity check",
+                "fidelity_gap": f"{noise_reduction:.1f}% duplicate case submissions detected",
+                "domain_code": "FID-06",
+                "findings_count": raw_logs - dedup_logs
+            }
+    else:
+        # Network log data — deduplication ratio matters
+        if noise_reduction > 80:
+            return {
+                "status_label": "OPTIMIZED",
+                "status_color": "green",
+                "evaluation_metric": "SimHash deduplication ratio",
+                "fidelity_gap": f"{noise_reduction:.1f}% noise reduction achieved",
+                "domain_code": "FID-06",
+                "findings_count": 0
+            }
+        else:
+            return {
+                "status_label": "NOISY",
+                "status_color": "red",
+                "evaluation_metric": "SimHash deduplication ratio",
+                "fidelity_gap": f"Only {noise_reduction:.1f}% noise reduction — high alert volume",
+                "domain_code": "FID-06",
+                "findings_count": raw_logs - dedup_logs
+            }
 
 @router.get("/overview", response_model=NationalOverviewResponse)
 def get_national_overview():
-    return NationalOverviewResponse(
-        active_entities=18,
-        alerts_analyzed=1428950,
-        cases_analyzed=284120,
-        supervisory_findings=64,
-        priority_pool_cases=342,
-        entities=[
+    metrics = vectorstore.get_dashboard_metrics()
+    
+    # Dynamically fetch entities from ledger
+    db_entities = get_all_entities()
+    dynamic_entities = []
+    
+    for row in db_entities:
+        case_id = row[0]
+        name = row[1]
+        sector = row[2] or "Unknown Sector"
+        score = row[3] or 0
+        
+        dynamic_entities.append(
             CSESummary(
-                id="CSE-FIN-0091",
-                name="Alpha Bank",
-                sector="Banking & Financial",
-                tier="Tier 1 Scheduled",
-                period="Q2 2026",
-                alerts_count=124832,
-                cases_count=32481,
-                attention_level="High attention",
-                key_concern="Potential escalation weakness & rapid critical alert closure (38.8% < 5m)",
-                review_status="In Progress (4/12)"
-            ),
-            CSESummary(
-                id="CSE-TEL-0044",
-                name="Beta Telecom",
-                sector="Telecommunications",
-                tier="Tier 1 Backbone",
-                period="Q2 2026",
-                alerts_count=382190,
-                cases_count=68140,
-                attention_level="Moderate attention",
-                key_concern="Potential monitoring coverage gap (184 critical routers dormant)",
-                review_status="Under Review"
-            ),
-            CSESummary(
-                id="CSE-PWR-0102",
-                name="Gamma Energy Grid",
-                sector="Power & Energy",
-                tier="Transmission Grid",
-                period="Q1 2026",
-                alerts_count=94120,
-                cases_count=14200,
-                attention_level="Low attention",
-                key_concern="Normal operational dispersion; no major outlier signals",
-                review_status="Completed (Signed Off)"
-            ),
-            CSESummary(
-                id="CSE-FIN-0182",
-                name="Delta FinCorp",
-                sector="NBFC & Payments",
-                tier="Tier 2 Settlement",
-                period="Q2 2026",
-                alerts_count=88400,
-                cases_count=19310,
-                attention_level="High attention",
-                key_concern="Repetitive investigation narratives across 840+ incident cases",
-                review_status="Pending Examiner Review"
+                id=case_id,
+                name=name,
+                sector=sector,
+                tier="Scheduled",
+                period=datetime.now().strftime("%B %Y"),
+                alerts_count=metrics["alerts_analyzed"],
+                cases_count=metrics["cases_analyzed"],
+                attention_level="CRITICAL" if score > 80 else "NOMINAL",
+                key_concern="Awaiting manual review" if score > 80 else "No immediate concerns",
+                review_status="Pending"
             )
-        ]
+        )
+        
+    return NationalOverviewResponse(
+        active_entities=metrics["active_entities"],
+        alerts_analyzed=metrics["alerts_analyzed"],
+        cases_analyzed=metrics["cases_analyzed"],
+        supervisory_findings=metrics["supervisory_findings"],
+        priority_pool_cases=metrics["priority_pool_cases"],
+        entities=dynamic_entities
     )
 
 @router.get("/{cse_id}", response_model=CSEDetailResponse)
-def get_cse_detail(cse_id: str):
-    if cse_id.lower() in ["cse-fin-0091", "alpha-bank", "alphabank"]:
-        return CSEDetailResponse(
-            cse_id="CSE-FIN-0091",
-            cse_name="Alpha Bank",
-            tier="TIER-1 CORE BANKING SYSTEM",
-            audit_window="April 01, 2026 - June 30, 2026",
-            examiner="R. Varma (Lead Supervisor, NCIIPC)",
-            attention_level="HIGH ATTENTION",
-            alerts_ingested=124832,
-            cases_correlated=32481,
-            formal_investigations=28923,
-            escalations_logged=4192,
-            active_anomalies=21,
-            peer_variance_index="+27.4%",
-            manual_review_queue_count=43,
-            dimensions=[
-                DimensionMetric(
-                    title="1. Detection",
-                    status_label="ELEVATED SIGNALS (4)",
-                    status_color="red",
-                    evaluation_metric="124.8k alerts evaluated against dynamic enterprise asset mapping registry.",
-                    fidelity_gap="46%",
-                    domain_code="DET-01",
-                    findings_count=4
-                ),
-                DimensionMetric(
-                    title="2. Investigation",
-                    status_label="ELEVATED SIGNALS (7)",
-                    status_color="red",
-                    evaluation_metric="NLP Text Entropy: 1,328 repetitive highly boilerplate text patterns detected.",
-                    fidelity_gap="59%",
-                    domain_code="INV-02",
-                    findings_count=7
-                ),
-                DimensionMetric(
-                    title="3. Escalation",
-                    status_label="SIGNIFICANT DEVIATION (3)",
-                    status_color="red",
-                    evaluation_metric="143 critical cases closed with zero escalation records (+21.4% peer dev).",
-                    fidelity_gap="31.4%",
-                    domain_code="ESC-03",
-                    findings_count=3
-                ),
-                DimensionMetric(
-                    title="4. Operational Discipline",
-                    status_label="MODERATE ATTENTION (3)",
-                    status_color="amber",
-                    evaluation_metric="38.8% of high/critical alerts closed in under 5 minutes without notes.",
-                    fidelity_gap="38.8%",
-                    domain_code="OPD-04",
-                    findings_count=3
-                ),
-                DimensionMetric(
-                    title="5. Monitoring Coverage",
-                    status_label="COVERAGE GAP (3)",
-                    status_color="red",
-                    evaluation_metric="313 dark assets (production core banking assets with zero security event logs).",
-                    fidelity_gap="3.7%",
-                    domain_code="COV-05",
-                    findings_count=3
-                ),
-                DimensionMetric(
-                    title="6. Cyber Resilience",
-                    status_label="MODERATE SIGNALS (1)",
-                    status_color="amber",
-                    evaluation_metric="17 uncleared assets subject to recurrent uncleared alerts exceeding 45 days.",
-                    fidelity_gap="32%",
-                    domain_code="RES-06",
-                    findings_count=1
-                )
-            ]
-        )
-    raise HTTPException(status_code=404, detail="CSE Entity Not Found")
+def get_cse_detail(cse_id: str, sector: str = "General"):
+    metrics = vectorstore.get_dashboard_metrics()
+    clusters = vectorstore.get_all_clusters()
+    
+    # 1. Threat Analytics
+    score_result = scoring_engine.evaluate_clusters(clusters)
+    rules_fired_str = ", ".join([r['rule'] for r in score_result['fired_rules'][:2]]) if score_result['fired_rules'] else "No severe rules triggered"
+    
+    # Write the score to ledger to enable Peer Variance engine
+    try:
+        update_entity_score(cse_id, sector, score_result["risk_score"])
+    except:
+        pass
+        
+    # 4. Peer Variance
+    peer_res = peer_engine.evaluate_variance(cse_id, score_result["risk_score"], sector)
+    
+    # 2. Anomaly Metrics
+    anomaly_res = anomaly_engine.evaluate_temporal_anomalies(clusters)
+    
+    # 5. Asset Exposure
+    asset_res = asset_engine.evaluate_exposure(clusters)
+    
+    # 6. Alert Fidelity
+    raw_logs = metrics["alerts_analyzed"]
+    dedup_logs = metrics["cases_analyzed"]
+    noise_reduction = 0
+    if raw_logs > 0:
+        noise_reduction = (1 - (dedup_logs / raw_logs)) * 100
+        
+    # 3. Compliance Posture
+    project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
+    comp_file = os.path.join(project_root, "data_samples", "db", f"{cse_id.upper()}_compliance.json")
+    if os.path.exists(comp_file):
+        with open(comp_file, "r") as f:
+            comp_res = json.load(f)
+    else:
+        comp_res = {
+            "status_label": "AWAITING DOCUMENT",
+            "status_color": "gray",
+            "evaluation_metric": "Requires ISMS upload",
+            "fidelity_gap": "No compliance data ingested",
+            "findings_count": 0
+        }
+        
+    return CSEDetailResponse(
+        cse_id=cse_id.upper(),
+        cse_name=get_entity_name(cse_id),
+        tier="Scheduled",
+        audit_window=datetime.now().strftime("%B %Y"),
+        examiner="Automated SAT-SA Engine",
+        attention_level="CRITICAL" if score_result["risk_score"] > 80 else "HIGH ATTENTION",
+        alerts_ingested=raw_logs,
+        cases_correlated=dedup_logs,
+        formal_investigations=len(score_result["fired_rules"]),
+        escalations_logged=metrics["priority_pool_cases"],
+        active_anomalies=len(score_result["fired_rules"]),
+        peer_variance_index=f"Risk Score: {score_result['risk_score']}/99",
+        manual_review_queue_count=len(score_result["fired_rules"]),
+        dimensions=[
+            DimensionMetric(
+                title="1. Threat Analytics",
+                status_label=f"SCORE: {score_result['risk_score']}/99",
+                status_color="red" if score_result["risk_score"] > 80 else "green",
+                evaluation_metric=f"Rules triggered: {rules_fired_str}",
+                fidelity_gap=f"{len(score_result['fired_rules'])} severe correlation breaches",
+                domain_code="DET-01",
+                findings_count=len(score_result["fired_rules"])
+            ),
+            DimensionMetric(
+                title="2. Anomaly Metrics",
+                status_label=anomaly_res["status_label"],
+                status_color=anomaly_res["status_color"],
+                evaluation_metric=anomaly_res["evaluation_metric"],
+                fidelity_gap=anomaly_res["fidelity_gap"],
+                domain_code="ANM-02",
+                findings_count=anomaly_res["findings_count"]
+            ),
+            DimensionMetric(
+                title="3. Compliance Posture",
+                status_label=comp_res["status_label"],
+                status_color=comp_res["status_color"],
+                evaluation_metric=comp_res["evaluation_metric"],
+                fidelity_gap=comp_res["fidelity_gap"],
+                domain_code="CMP-03",
+                findings_count=comp_res["findings_count"]
+            ),
+            DimensionMetric(
+                title="4. Peer Variance",
+                status_label=peer_res["status_label"],
+                status_color=peer_res["status_color"],
+                evaluation_metric=peer_res["evaluation_metric"],
+                fidelity_gap=peer_res["fidelity_gap"],
+                domain_code="PRV-04",
+                findings_count=peer_res["findings_count"]
+            ),
+            DimensionMetric(
+                title="5. Asset Exposure",
+                status_label=asset_res["status_label"],
+                status_color=asset_res["status_color"],
+                evaluation_metric=asset_res["evaluation_metric"],
+                fidelity_gap=asset_res["fidelity_gap"],
+                domain_code="AST-05",
+                findings_count=asset_res["findings_count"]
+            ),
+            DimensionMetric(
+                title="6. Alert Fidelity",
+                **_compute_fidelity(raw_logs, dedup_logs, clusters)
+            )
+        ]
+    )

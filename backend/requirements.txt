@@ -1,4 +1,6 @@
-fastapi
+﻿fastapi
 uvicorn
 pydantic
 chromadb
+ollama
+python-multipart

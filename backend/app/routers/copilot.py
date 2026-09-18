@@ -1,23 +1,23 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.models.schemas import CopilotRequest, CopilotResponse
+from app.services.ai.copilot import CopilotEngine
 
 router = APIRouter(prefix="/api/v1/copilot", tags=["AI Copilot"])
+copilot_engine = CopilotEngine()
 
 @router.post("/query", response_model=CopilotResponse)
 def query_copilot(payload: CopilotRequest):
-    query_lower = payload.query.lower()
-    
-    if "jira" in query_lower or "4402" in query_lower or "soc" in query_lower or "correct" in query_lower:
+    try:
+        result = copilot_engine.query(payload.query)
+        
+        # Simple heuristic to flag findings if the LLM detects violations
+        flagged = "violation" in result["answer"].lower() or "false positive" in result["answer"].lower() or "critical" in result["answer"].lower()
+        
         return CopilotResponse(
             query=payload.query,
-            answer="No. The SOC analyst closed Jira Ticket #4402 in 4 minutes citing 'False Positive', without noticing the subsequent 2.1GB outbound data transfer to hostile IP 185.15.22.1 that occurred 15 minutes post-compromise. This violates critical incident response protocols.",
-            findings_flagged=True,
-            evidence_sources=["Cisco Firewall Log #85410", "Jira Ticket #4402", "SimHash Alert Cluster #12"]
+            answer=result["answer"],
+            findings_flagged=flagged,
+            evidence_sources=result["sources"]
         )
-        
-    return CopilotResponse(
-        query=payload.query,
-        answer="Analysis complete: Evaluated against NCIIPC Circular 14B standards. Telemetry indicates elevated anomaly entropy across Tier-1 core banking subnets.",
-        findings_flagged=False,
-        evidence_sources=["Unified Schema Index #04"]
-    )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Copilot Engine Error: {str(e)}")

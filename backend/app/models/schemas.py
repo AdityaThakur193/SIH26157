@@ -1,16 +1,14 @@
-from pydantic import BaseModel, Field
+﻿from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 
-# 1. Unified Log Schema
 class UnifiedLogRecord(BaseModel):
     timestamp: str
     source_ip: Optional[str] = "N/A"
-    dest_ip: Optional[str] = "N/A"
+    dest_ip: str
     event_type: str
     severity: str = "INFO"
     raw: str
 
-# 2. National Overview Dashboard Schemas
 class CSESummary(BaseModel):
     id: str
     name: str
@@ -19,23 +17,22 @@ class CSESummary(BaseModel):
     period: str
     alerts_count: int
     cases_count: int
-    attention_level: str  # High attention, Moderate attention, Low attention
+    attention_level: str
     key_concern: str
     review_status: str
 
 class NationalOverviewResponse(BaseModel):
-    active_entities: int = 18
-    alerts_analyzed: int = 1428950
-    cases_analyzed: int = 284120
-    supervisory_findings: int = 64
-    priority_pool_cases: int = 342
+    active_entities: int
+    alerts_analyzed: int
+    cases_analyzed: int
+    supervisory_findings: int
+    priority_pool_cases: int
     entities: List[CSESummary]
 
-# 3. CSE Detailed Assessment (Alpha Bank Dossier) Schemas
 class DimensionMetric(BaseModel):
     title: str
     status_label: str
-    status_color: str  # red, amber, green
+    status_color: str
     evaluation_metric: str
     fidelity_gap: str
     domain_code: str
@@ -57,7 +54,6 @@ class CSEDetailResponse(BaseModel):
     manual_review_queue_count: int
     dimensions: List[DimensionMetric]
 
-# 4. Ingestion & Blockchain Ledger Schemas
 class IngestResponse(BaseModel):
     case_id: str
     entity_name: str
@@ -67,7 +63,6 @@ class IngestResponse(BaseModel):
     deduplicated_clusters: int
     status: str
 
-# 5. AI Threat Copilot Schemas
 class CopilotRequest(BaseModel):
     query: str
     case_id: Optional[str] = None

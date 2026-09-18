@@ -1,0 +1,5 @@
+﻿COMPANY INFORMATION SECURITY POLICY - ALPHA BANK
+1. Passwords must be 8 characters long and rotated every 365 days.
+2. Two-Factor Authentication (2FA) is recommended for employees but not strictly enforced for remote access.
+3. Customer data is stored in plain text to allow fast retrieval.
+4. Internal network audits occur every 5 years.
