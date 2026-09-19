@@ -296,74 +296,58 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
         </div>
       )}
 
-      {/* 4 KPI Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1 */}
-        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Evaluated CSEs</span>
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-              <Building2 className="w-4 h-4" />
+      {/* Asymmetric F-Pattern KPI Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        
+        {/* PRIMARY METRIC: Highest visual weight, top-left, dark contrast */}
+        <div className="overview-card bg-slate-900 rounded-xl p-6 shadow-md col-span-1 flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Action Required</span>
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 mb-2 font-mono">
-            <AnimatedCounter value={entityChartData.length} />
-          </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
-            <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
-            <span>Active critical sector entities</span>
+          <div>
+            <div className="text-6xl font-black text-white mb-2 tabular-nums tracking-tighter leading-none">
+              {loading ? '...' : <AnimatedCounter value={data?.priority_pool_cases ?? 0} />}
+            </div>
+            <p className="text-sm text-slate-400 font-medium">Priority Cases Pending Review</p>
           </div>
         </div>
 
-        {/* Card 2 */}
-        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Alerts Analyzed</span>
-            <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
-              <Activity className="w-4 h-4" />
+        {/* SECONDARY METRICS: Lighter visual weight, tabular numbers, no decorative icons */}
+        <div className="col-span-1 lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          
+          <div className="overview-card bg-white rounded-xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Flagged Signals</span>
+            <div>
+              <div className="text-3xl font-bold text-slate-900 mb-1 tabular-nums tracking-tight">
+                {loading ? '...' : <AnimatedCounter value={data?.supervisory_findings ?? 0} />}
+              </div>
+              <p className="text-[11px] text-slate-500 font-medium">Anomalous deviations</p>
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 mb-2 font-mono">
-            {loading ? '...' : <AnimatedCounter value={data?.alerts_analyzed ?? 0} />}
-          </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
-            <div className="w-1.5 h-1.5 rounded-full bg-teal-600" />
-            <span>Raw SOC telemetry events</span>
-          </div>
-        </div>
 
-        {/* Card 3 */}
-        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Flagged Signals</span>
-            <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
-              <ShieldAlert className="w-4 h-4" />
+          <div className="overview-card bg-white rounded-xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Evaluated CSEs</span>
+            <div>
+              <div className="text-3xl font-bold text-slate-900 mb-1 tabular-nums tracking-tight">
+                <AnimatedCounter value={entityChartData.length} />
+              </div>
+              <p className="text-[11px] text-slate-500 font-medium">Active sector entities</p>
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 mb-2 font-mono">
-            {loading ? '...' : <AnimatedCounter value={data?.supervisory_findings ?? 0} />}
-          </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
-            <div className="w-1.5 h-1.5 rounded-full bg-orange-600" />
-            <span>Requires human review</span>
-          </div>
-        </div>
 
-        {/* Card 4 */}
-        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Priority Cases</span>
-            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
-              <Layers className="w-4 h-4" />
+          <div className="overview-card bg-white rounded-xl border border-slate-200 p-6 shadow-xs flex flex-col justify-between">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4">Alerts Analyzed</span>
+            <div>
+              <div className="text-3xl font-bold text-slate-900 mb-1 tabular-nums tracking-tight">
+                {loading ? '...' : <AnimatedCounter value={data?.alerts_analyzed ?? 0} />}
+              </div>
+              <p className="text-[11px] text-slate-500 font-medium">Raw SOC telemetry</p>
             </div>
           </div>
-          <div className="text-3xl font-bold text-slate-900 mb-2 font-mono">
-            {loading ? '...' : <AnimatedCounter value={data?.priority_pool_cases ?? 0} />}
-          </div>
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
-            <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-            <span>Pending review pool</span>
-          </div>
+
         </div>
       </div>
 
@@ -654,7 +638,9 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
           <div className="flex items-start justify-between mb-6">
             <div>
               <h2 className="text-lg font-bold text-slate-900">Baseline Health</h2>
-              <p className="text-xs text-slate-500 mt-1">Global confidence & integrity</p>
+              <p className="text-[11px] font-medium text-slate-500 mt-1 leading-snug">
+                Statistical confidence that current telemetry fits expected normal behavior patterns. Values &lt; 75% indicate anomalous network activity across the sector.
+              </p>
             </div>
             <div className="flex gap-2 text-slate-400">
               <button onClick={() => alert('Filter applied')} className="hover:text-indigo-600 cursor-pointer p-1 rounded hover:bg-slate-100 transition"><Filter className="w-4 h-4" /></button>
@@ -721,7 +707,9 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
         <div className="flex items-start justify-between mb-6">
           <div>
             <h2 className="text-sm font-bold text-slate-900">Baseline Deviations</h2>
-            <p className="text-[11px] text-slate-500 mt-1">Disproportionate sub-operational stress across monitored critical sector entities.</p>
+            <p className="text-[11px] font-medium text-slate-500 mt-1 leading-snug">
+              Deviation of high-severity finding rates versus the sector average baseline. High deviation indicates disproportionate sub-operational stress.
+            </p>
           </div>
           <Activity className="w-4 h-4 text-slate-400" />
         </div>

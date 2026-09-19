@@ -1,0 +1,3 @@
+SAT-SA.
+When critical infrastructure SOCs drown in 1.4 million alerts and close active breaches in four minutes as "forgotten passwords", SAT-SA audits the negative space.
+Air-gapped supervisory intelligence powered by 64-bit SimHash and an offline AI Threat Copilot for NCIIPC. #SIH157

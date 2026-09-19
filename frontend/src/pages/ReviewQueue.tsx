@@ -21,6 +21,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'adjudicated'>('pending');
   const [searchQuery, setSearchQuery] = useState('');
   const [adjudicatingId, setAdjudicatingId] = useState<string | null>(null);
+  const [successId, setSuccessId] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -78,22 +79,22 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
     }
   }, { scope: containerRef, dependencies: [loading, data, activeTab, searchQuery] });
 
-  const handleAdjudicate = async (cseId: string, verdict: 'APPROVED' | 'ESCALATED' | 'REMEDIATION_REQUIRED') => {
+  const handleAdjudicate = async (cseId: string, verdict: string, remarks?: string) => {
     setAdjudicatingId(cseId);
-    setActionSuccess(null);
     try {
-      const remarks = 
-        verdict === 'APPROVED' ? 'Statutory evaluation certified by human examiner.' :
-        verdict === 'ESCALATED' ? 'Escalated for formal Section 70B inquiry and deep forensics.' :
-        'Corrective Action Plan (CAP) demanded within 15 calendar days.';
-
       await adjudicateEntity(cseId, verdict, remarks);
+      setSuccessId(cseId);
       setActionSuccess(`Case ${cseId} successfully marked as ${verdict}`);
-      await fetchData();
+      
+      setTimeout(async () => {
+        await fetchData();
+        setSuccessId(null);
+        setAdjudicatingId(null);
+      }, 800);
+      
       setTimeout(() => setActionSuccess(null), 4000);
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Adjudication failed');
-    } finally {
       setAdjudicatingId(null);
     }
   };
@@ -152,9 +153,9 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
       {/* Header */}
       <div className="queue-header flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <div className="flex items-center space-x-2 text-indigo-600 font-semibold text-xs tracking-wider uppercase">
+          <div className="flex items-center space-x-2 text-indigo-600 font-semibold text-xs tracking-wider uppercase mb-1">
             <ListChecks className="w-4 h-4" />
-            <span>Screen 06: Review Queue</span>
+            <span>Review Queue</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 mt-1">Pending Adjudications</h1>
           <p className="text-sm text-slate-500 mt-0.5">
@@ -382,7 +383,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
 
                   <button
                     onClick={() => onNavigate('copilot', entity.id)}
-                    className="px-3 py-2 bg-purple-50 hover:bg-purple-100 active:scale-95 text-purple-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition border border-purple-100 cursor-pointer"
+                    className="px-3 py-2 bg-indigo-50 hover:bg-indigo-100 active:scale-95 text-indigo-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition border border-indigo-100 cursor-pointer"
                     title="Launch Forensic Copilot"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
@@ -391,6 +392,14 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
 
                   {/* Adjudication Decision Buttons */}
                   {isPending ? (
+                    successId === entity.id ? (
+                      <div className="flex items-center gap-1.5 animate-in fade-in zoom-in duration-300">
+                        <span className="px-3 py-2 bg-emerald-100 text-emerald-800 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-emerald-200">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                          <span>Recorded</span>
+                        </span>
+                      </div>
+                    ) : (
                     <div className="flex items-center gap-1.5">
                       <button
                         onClick={(e) => {
@@ -431,6 +440,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
                         <span>Remediate</span>
                       </button>
                     </div>
+                    )
                   ) : (
                     <div className="flex items-center gap-1.5">
                       <button

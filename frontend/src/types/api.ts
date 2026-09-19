@@ -104,7 +104,8 @@ export interface EvidenceDetail {
   source_ips: string[];
   dest_ip: string;
   severity: string;
-  sample_raw: string;
+  sample_raw?: string;
+  sample?: string;
   count: number;
   first_seen: string;
   last_seen: string;

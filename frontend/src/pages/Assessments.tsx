@@ -3,6 +3,7 @@ import {
   FileCheck2, ChevronRight, AlertTriangle, RefreshCw, Building2, 
   ShieldAlert, ShieldCheck, ArrowRight, Filter, Search, Plus
 } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from 'recharts';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { getOverview } from '../services/api';
@@ -123,9 +124,9 @@ export const Assessments: React.FC<AssessmentsProps> = ({ onNavigate }) => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
         <div>
-          <div className="flex items-center space-x-2 text-indigo-600 font-semibold text-xs tracking-wider uppercase mb-1">
-            <FileCheck2 className="w-4 h-4" />
-            <span>Screen 04: Statutory Evaluation Roster</span>
+          <div className="flex items-center space-x-2 text-primary font-semibold text-xs tracking-wider uppercase">
+            <ShieldCheck className="w-4 h-4" />
+            <span>Statutory Evaluation Roster</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
             Critical Sector Entity Assessments
@@ -151,6 +152,29 @@ export const Assessments: React.FC<AssessmentsProps> = ({ onNavigate }) => {
             <Plus className="w-4 h-4" />
             <span>Ingest New CSE</span>
           </button>
+        </div>
+      </div>
+
+      {/* Analytics Chart */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-2xs mb-6">
+        <h3 className="text-sm font-bold text-slate-800 mb-4">Relative Alert Volume (Raw Telemetry)</h3>
+        <div className="h-48 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={entities} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+              <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} tickFormatter={(val) => val > 0 ? `${val / 1000}k` : '0'} />
+              <RechartsTooltip 
+                cursor={{ fill: '#f8fafc' }}
+                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+                formatter={(value: number) => [value.toLocaleString(), 'Raw Alerts']}
+              />
+              <Bar dataKey="alerts_count" radius={[4, 4, 0, 0]}>
+                {entities.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.attention_level === 'CRITICAL' ? '#e11d48' : entry.attention_level === 'WARNING' ? '#d97706' : '#4f46e5'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
@@ -220,8 +244,9 @@ export const Assessments: React.FC<AssessmentsProps> = ({ onNavigate }) => {
                 <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
                   {entity.name}
                 </h3>
-                <span className="font-mono text-xs text-slate-400 font-medium block mt-0.5">
+                <span className="font-mono text-xs text-slate-400 font-medium flex items-center gap-1 mt-0.5">
                   {entity.id}
+                  <span className="font-sans text-[9px] uppercase tracking-wider text-slate-300 border border-slate-200 px-1 rounded-sm" title="System-generated case identifier">Auto-ID</span>
                 </span>
 
                 <div className="mt-4 pt-4 border-t border-slate-100 space-y-2 text-xs">

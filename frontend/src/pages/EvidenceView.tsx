@@ -23,12 +23,13 @@ const ExpandedRowContent = ({ e, handleSendCopilot }: { e: any, handleSendCopilo
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Raw Telemetry Payload</div>
             <pre className="p-3 bg-slate-900 text-emerald-400 font-mono text-[11px] rounded-xl overflow-y-auto max-h-48 border border-slate-800 leading-relaxed shadow-inner whitespace-pre-wrap break-all" data-lenis-prevent="true">
               <code>
-                {e.sample_raw ? (
+                {(e.sample_raw || e.sample) ? (
                   (() => {
+                    const rawPayload = e.sample_raw || e.sample || '';
                     try {
-                      return JSON.stringify(JSON.parse(e.sample_raw), null, 2);
+                      return JSON.stringify(JSON.parse(rawPayload), null, 2);
                     } catch (err) {
-                      return e.sample_raw;
+                      return rawPayload;
                     }
                   })()
                 ) : 'No raw payload stored'}

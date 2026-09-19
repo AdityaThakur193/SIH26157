@@ -45,7 +45,7 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
   const [messages, setMessages] = useState<Message[]>([
     {
       sender: 'copilot',
-      text: `Supervisory Forensic Copilot initialized for ${cseId || 'Alpha Bank Ltd'}. All queries are routed air-gapped to Ollama (llama3.1:8b) with semantic vector retrieval against ChromaDB clusters. Ask any question regarding anomalous telemetry, fidelity gaps, or statutory compliance.`,
+      text: `Supervisory Forensic Copilot initialized for ${cseId || 'selected case'}. Queries process locally. Ask any question regarding anomalous telemetry, fidelity gaps, or statutory compliance.`,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
@@ -55,10 +55,10 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
   }, [messages, loading]);
 
   const quickPrompts = [
-    `What are the most critical threat findings for ${cseId}?`,
-    `Analyze the anomaly patterns and temporal spikes detected in ${cseId}.`,
-    `What compliance gaps exist for ${cseId} against NCIIPC baseline controls?`,
-    `Summarize the peer variance and risk posture for ${cseId} compared to sector peers.`
+    `What are the most critical threat findings for this case?`,
+    `Analyze the anomaly patterns and temporal spikes detected here.`,
+    `What compliance gaps exist against baseline controls?`,
+    `Summarize the peer variance and risk posture compared to sector peers.`
   ];
 
   const handleSend = async (customQuery?: string) => {
@@ -143,11 +143,11 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
           </button>
           <div>
             <div className="text-xs font-semibold text-primary uppercase tracking-wider">
-              Screen 06: Deep Dive & Forensic Copilot
+              Deep Dive & Forensic Copilot
             </div>
             <div className="flex items-center gap-2 mt-0.5">
               <h1 className="text-2xl font-bold text-gray-900">Enclave Forensic Copilot</h1>
-              <span className="font-mono text-xs text-primary bg-purple-50 border border-purple-200 px-2 py-0.5 rounded font-bold">
+              <span className="font-mono text-xs text-primary bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded font-bold">
                 {cseId || 'No Entity Selected'}
               </span>
             </div>
@@ -179,7 +179,7 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
                   key={idx}
                   onClick={() => handleSend(prompt)}
                   disabled={loading}
-                  className="w-full text-left p-3 rounded-xl border border-outline hover:border-primary/50 bg-[#FAFBFD] hover:bg-purple-50/30 text-xs font-medium text-gray-700 transition-all flex items-start justify-between gap-2 group cursor-pointer active:scale-98"
+                  className="w-full text-left p-3 rounded-xl border border-outline hover:border-primary/50 bg-[#FAFBFD] hover:bg-indigo-50/30 text-xs font-medium text-gray-700 transition-all flex items-start justify-between gap-2 group cursor-pointer active:scale-98"
                 >
                   <span className="line-clamp-2">{prompt}</span>
                   <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-primary shrink-0 mt-0.5" />
@@ -223,7 +223,7 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
                 className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
               >
                 {msg.sender === 'copilot' && (
-                  <div className="w-8 h-8 rounded-xl bg-purple-100 text-primary flex items-center justify-center shrink-0 mt-1">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-100 text-primary flex items-center justify-center shrink-0 mt-1">
                     <Sparkles className="w-4 h-4" />
                   </div>
                 )}
@@ -241,7 +241,7 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
 
                   {/* Evidence Source Tags (Clickable Pills to inspect raw evidence) */}
                   {msg.sources && msg.sources.length > 0 && (
-                    <div className="p-3 bg-purple-50/50 rounded-xl border border-purple-100 text-xs space-y-2">
+                    <div className="p-3 bg-indigo-50/50 rounded-xl border border-indigo-100 text-xs space-y-2">
                       <div className="flex items-center gap-1.5 font-bold text-primary text-[11px]">
                         <Layers className="w-3.5 h-3.5" />
                         <span>Retrieved Incident Evidence Sources (Click to inspect):</span>
@@ -252,11 +252,11 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
                             key={sIdx}
                             type="button"
                             onClick={() => handleInspectSource(src)}
-                            className="px-2.5 py-1 bg-white hover:bg-purple-100 hover:border-purple-300 border border-purple-200 text-gray-700 font-mono text-[10px] rounded-md shadow-2xs transition-all active:scale-95 cursor-pointer flex items-center gap-1 group"
+                            className="px-2.5 py-1 bg-white hover:bg-indigo-100 hover:border-indigo-300 border border-indigo-200 text-gray-700 font-mono text-[10px] rounded-md shadow-2xs transition-all active:scale-95 cursor-pointer flex items-center gap-1 group"
                             title={`Inspect evidence cluster: ${src}`}
                           >
                             <span>{src}</span>
-                            <ExternalLink className="w-2.5 h-2.5 text-purple-400 group-hover:text-purple-600" />
+                            <ExternalLink className="w-2.5 h-2.5 text-indigo-400 group-hover:text-indigo-600" />
                           </button>
                         ))}
                       </div>
@@ -272,7 +272,7 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
 
             {loading && (
               <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-xl bg-purple-100 text-primary flex items-center justify-center shrink-0 animate-pulse">
+                <div className="w-8 h-8 rounded-xl bg-indigo-100 text-primary flex items-center justify-center shrink-0 animate-pulse">
                   <Sparkles className="w-4 h-4" />
                 </div>
                 <div className="p-4 rounded-2xl bg-[#FAFBFD] border border-outline text-xs text-gray-600 flex items-center gap-3">

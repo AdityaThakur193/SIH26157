@@ -61,7 +61,6 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, section: 'core' },
     { id: 'assessments', label: 'Assessments', icon: FileCheck2, section: 'core' },
     { id: 'evidence', label: 'Data Ingestion', icon: UploadCloud, section: 'core' },
-    { id: 'findings', label: 'Findings', icon: AlertTriangle, section: 'core' },
     { id: 'review-queue', label: 'Review Queue', icon: ListChecks, section: 'core' },
     { id: 'copilot', label: 'AI Threat Copilot', icon: Bot, section: 'system' }
   ];
@@ -137,19 +136,18 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
         </div>
 
-        {/* Air-Gapped Node Status Card */}
+        {/* System Status Card */}
         <div className="p-3 border-t border-outline bg-surface">
           <div className="p-3 rounded-lg border border-outline bg-surface-dim flex flex-col gap-1.5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] text-on-surface font-semibold truncate">Local Node #04</span>
+              <span className="text-[11px] text-on-surface font-semibold truncate">System Status: Operational</span>
               <span className="h-2 w-2 rounded-full bg-emerald-500 ring-4 ring-emerald-100" title="Operational / Stable" />
             </div>
             <div className="flex items-center justify-between text-on-surface-variant text-[11px]">
               <span className="flex items-center gap-1">
                 <WifiOff className="w-3 h-3 text-emerald-600" />
-                Air-Gapped Core
+                Local processing — no external network calls
               </span>
-              <span className="font-mono font-medium text-on-surface-variant">v4.2.1</span>
             </div>
           </div>
         </div>

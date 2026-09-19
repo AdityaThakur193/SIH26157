@@ -20,7 +20,7 @@ interface EvidenceLockerProps {
 }
 
 export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) => {
-  const [entityName, setEntityName] = useState('Alpha Bank Ltd');
+  const [entityName, setEntityName] = useState('Selected Entity');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -94,7 +94,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
       <div>
         <div className="flex items-center space-x-2 text-primary font-semibold text-xs tracking-wider uppercase">
           <ShieldCheck className="w-4 h-4" />
-          <span>Screen 02 & 03: Evidence Acquisition & Verification</span>
+          <span>Evidence Acquisition & Verification</span>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mt-1">Air-Gapped Evidence Locker</h1>
         <p className="text-sm text-gray-500 mt-0.5">
@@ -118,7 +118,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
               type="text"
               value={entityName}
               onChange={(e) => setEntityName(e.target.value)}
-              placeholder="e.g. Alpha Bank Ltd"
+              placeholder="e.g. Critical Sector Entity A"
               disabled={isProcessing}
               className="w-full px-4 py-2.5 rounded-xl border border-outline bg-gray-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors font-medium text-gray-800"
             />
@@ -157,7 +157,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                 <div>
                   <p className="text-sm font-bold text-gray-800">{selectedFile.name}</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {(selectedFile.size / 1024).toFixed(1)} KB • Ready to ingest
+                    {(selectedFile.size / 1024).toFixed(1)} KB  Ready to ingest
                   </p>
                   <span className="inline-block mt-3 px-3 py-1 bg-teal-50 text-accent-teal text-xs font-semibold rounded-lg border border-teal-200">
                     Click to swap file
@@ -292,7 +292,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                   Ingestion Cryptographically Committed
                 </h3>
                 <p className="text-xs text-gray-500">
-                  Case ID: <span className="font-mono font-bold text-gray-800">{result.case_id}</span> • Entity: <span className="font-semibold text-gray-800">{result.entity_name}</span>
+                  Case ID: <span className="font-mono font-bold text-gray-800">{result.case_id}</span>  Entity: <span className="font-semibold text-gray-800">{result.entity_name}</span>
                 </p>
               </div>
             </div>
@@ -303,36 +303,48 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="p-4 rounded-xl bg-gray-50 border border-outline">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                Raw Telemetry Logs
-              </span>
-              <div className="text-2xl font-bold font-mono text-gray-900 mt-1">
-                {result.total_raw_logs.toLocaleString()}
+            <div className="p-4 rounded-xl bg-gray-50 border border-outline flex flex-col justify-between">
+              <div>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                  Raw Telemetry Logs
+                </span>
+                <div className="text-4xl font-bold font-mono text-gray-900 mt-1 tabular-nums tracking-tighter">
+                  {result.total_raw_logs.toLocaleString()}
+                </div>
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">Parsed stream events</p>
+              <p className="text-xs text-gray-500 mt-2 leading-snug">
+                Total unfiltered event logs ingested directly from the entity's SOC before processing.
+              </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-gray-50 border border-outline">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                SimHash Clusters
-              </span>
-              <div className="text-2xl font-bold font-mono text-primary mt-1">
-                {result.deduplicated_clusters.toLocaleString()}
+            <div className="p-4 rounded-xl bg-gray-50 border border-outline flex flex-col justify-between">
+              <div>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                  SimHash Clusters
+                </span>
+                <div className="text-4xl font-bold font-mono text-primary mt-1 tabular-nums tracking-tighter">
+                  {result.deduplicated_clusters.toLocaleString()}
+                </div>
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">Deduplicated unique incident groups</p>
+              <p className="text-xs text-primary/80 mt-2 leading-snug font-medium">
+                Unique incident patterns identified after removing {((result.total_raw_logs - result.deduplicated_clusters)).toLocaleString()} duplicate/repeated alerts from the raw telemetry.
+              </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-gray-50 border border-outline">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                Reduction Compression
-              </span>
-              <div className="text-2xl font-bold font-mono text-accent-teal mt-1">
-                {result.total_raw_logs > 0 
-                  ? `${(((result.total_raw_logs - result.deduplicated_clusters) / result.total_raw_logs) * 100).toFixed(1)}%`
-                  : '0%'}
+            <div className="p-4 rounded-xl bg-gray-50 border border-outline flex flex-col justify-between">
+              <div>
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                  Reduction Compression
+                </span>
+                <div className="text-4xl font-bold font-mono text-accent-teal mt-1 tabular-nums tracking-tighter">
+                  {result.total_raw_logs > 0 
+                    ? `${(((result.total_raw_logs - result.deduplicated_clusters) / result.total_raw_logs) * 100).toFixed(1)}%`
+                    : '0%'}
+                </div>
               </div>
-              <p className="text-xs text-gray-400 mt-0.5">Telemetry volume noise reduction</p>
+              <p className="text-xs text-accent-teal/80 mt-2 leading-snug font-medium">
+                Overall noise reduction achieved through fuzzy cryptographic clustering, eliminating redundant analyst review.
+              </p>
             </div>
           </div>
 

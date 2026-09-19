@@ -128,6 +128,20 @@ def get_cse_evidence(cse_id: str, domain_code: str = None):
     
     if domain_code == "DET-01":
         clusters = [c for c in clusters if c.severity.upper() in ["HIGH", "CRITICAL"]]
+    elif domain_code == "ANM-02":
+        # Anomaly Metrics - focus on volumetric spikes
+        clusters = sorted(clusters, key=lambda x: x.count, reverse=True)[:25]
+    elif domain_code == "CMP-03":
+        # Compliance - no actual raw logs, typically empty
+        clusters = []
+    elif domain_code == "PRV-04":
+        # Peer variance - show representative sample
+        clusters = clusters[::3][:30]
+    elif domain_code == "AST-05":
+        # Asset exposure - focus on critical IPs
+        CRITICAL_KEYWORDS = ["DB", "CORE", "SWIFT", "PAY", "AUTH", "BANKING"]
+        filtered = [c for c in clusters if any(kw in (c.dest_ip or "").upper() for kw in CRITICAL_KEYWORDS)]
+        clusters = filtered if filtered else [c for c in clusters if c.severity.upper() in ["HIGH", "CRITICAL"]][:20]
     elif domain_code == "FID-06":
         clusters = sorted(clusters, key=lambda x: x.count, reverse=True)[:50]
         

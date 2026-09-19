@@ -38,15 +38,15 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </span>
         <div className="flex items-center gap-1.5">
           <button type="button" onClick={() => applyPersona('SHARMA-994', 'Auditor - Supervisory Lead', 'Alpha-Secure-901')}
-            className={`px-2.5 py-1 text-[11px] font-medium rounded-lg transition ${officerId === 'SHARMA-994' ? 'bg-primary-container text-primary font-bold' : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest'}`}>
+            className={`px-2.5 py-1 text-[11px] font-medium rounded-lg transition active:scale-95 cursor-pointer ${officerId === 'SHARMA-994' ? 'bg-primary-container text-primary font-bold' : 'bg-surface-container-high text-on-surface hover:bg-slate-200'}`}>
             AUDITOR
           </button>
           <button type="button" onClick={() => applyPersona('ROOT-SEC-01', 'System Administrator', 'Node-Admin-004')}
-            className={`px-2.5 py-1 text-[11px] font-medium rounded-lg transition ${officerId === 'ROOT-SEC-01' ? 'bg-primary-container text-primary font-bold' : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest'}`}>
+            className={`px-2.5 py-1 text-[11px] font-medium rounded-lg transition active:scale-95 cursor-pointer ${officerId === 'ROOT-SEC-01' ? 'bg-primary-container text-primary font-bold' : 'bg-surface-container-high text-on-surface hover:bg-slate-200'}`}>
             ADMIN
           </button>
           <button type="button" onClick={() => applyPersona('DIR-GEN-07', 'NCIIPC Director / General Counsel', 'NCIIPC-Exec-77')}
-            className={`px-2.5 py-1 text-[11px] font-medium rounded-lg transition ${officerId === 'DIR-GEN-07' ? 'bg-primary-container text-primary font-bold' : 'bg-surface-container-high text-on-surface hover:bg-surface-container-highest'}`}>
+            className={`px-2.5 py-1 text-[11px] font-medium rounded-lg transition active:scale-95 cursor-pointer ${officerId === 'DIR-GEN-07' ? 'bg-primary-container text-primary font-bold' : 'bg-surface-container-high text-on-surface hover:bg-slate-200'}`}>
             DIRECTOR
           </button>
         </div>
@@ -108,8 +108,8 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-medium">
-              <AlertTriangle className="w-4 h-4 text-red-500 shrink-0" />
+            <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs font-medium">
+              <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
               {error}
             </div>
           )}

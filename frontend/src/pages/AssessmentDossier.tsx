@@ -47,11 +47,17 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
   }, { scope: containerRef, dependencies: [loading, data] });
 
   const fetchDossier = async () => {
-    setLoading(true);
+    if (!data) setLoading(true);
     setError(null);
     try {
+      if (containerRef.current && data) {
+        gsap.to(containerRef.current, { opacity: 0.5, duration: 0.2 });
+      }
       const res = await getAssessment(cseId);
       setData(res);
+      if (containerRef.current) {
+        gsap.to(containerRef.current, { opacity: 1, duration: 0.3 });
+      }
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Failed to load assessment dossier';
       setError(msg);
@@ -89,7 +95,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
     }
   };
 
-  if (loading) {
+  if (loading && !data) {
     return (
       <div className="flex flex-col items-center justify-center h-96 text-slate-400 space-y-4">
         <div className="w-8 h-8 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin" />
@@ -136,15 +142,16 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-              Screen 05: Supervisory Assessment Dossier
+            <div className="text-xs font-semibold text-primary uppercase tracking-wider mb-1">
+              Supervisory Assessment Dossier
             </div>
             <div className="flex items-baseline gap-3">
               <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
                 {data.cse_name}
               </h1>
-              <span className="text-sm font-mono text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded">
+              <span className="text-sm font-mono text-slate-400 font-medium bg-slate-100 px-2 py-0.5 rounded flex items-center gap-1.5" title="System-generated case identifier">
                 {data.cse_id}
+                <span className="font-sans text-[9px] uppercase tracking-wider text-slate-300 border border-slate-200 px-1 rounded-sm bg-white">Auto-ID</span>
               </span>
             </div>
           </div>
@@ -166,7 +173,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
 
           <button 
             onClick={() => onNavigate('copilot')}
-            className="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 active:scale-95 text-purple-700 border border-purple-100 rounded-xl text-sm font-bold flex items-center gap-2 shadow-xs hover:shadow-sm transition-all cursor-pointer"
+            className="px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 active:scale-95 text-indigo-700 border border-indigo-100 rounded-xl text-sm font-bold flex items-center gap-2 shadow-xs hover:shadow-sm transition-all cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
             <span>Forensic Copilot & Evidence</span>
@@ -280,40 +287,64 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
           return (
             <div key={i} className="dimension-card bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
               <div className="p-5 flex-1 flex flex-col">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 text-[10px] font-bold font-mono tracking-wider">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex flex-col gap-1">
+                    <span className={`text-lg font-black uppercase tracking-tight ${dim.status_color === "red" ? 'text-rose-600' : dim.status_color === "green" ? 'text-teal-600' : dim.status_color === "yellow" ? 'text-amber-600' : 'text-slate-500'}`}>
+                      {dim.status_label}
+                    </span>
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-3xl font-black text-slate-900 font-mono tracking-tighter tabular-nums leading-none">
+                        {dim.findings_count}
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Findings</span>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-500 text-[10px] font-bold font-mono tracking-wider">
                     {dim.domain_code}
-                  </span>
-                  <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider ${badgeClass}`}>
-                    {dim.status_label}
                   </span>
                 </div>
                 
-                <h3 className="text-base font-bold text-slate-900 mb-2">{dim.title}</h3>
-                <p className="text-xs text-slate-600 leading-relaxed mb-4 flex-1">
-                  {dim.evaluation_metric}
+                <h3 className="text-sm font-bold text-slate-700 mb-1">{dim.title}</h3>
+                <p className="text-[11px] text-slate-500 leading-snug mb-3 flex-1 font-medium">
+                  {dim.domain_code === 'DET-01' ? "Composite risk metric derived from anomaly frequency, severity, and peer variance. Scores above 80 require immediate attention." :
+                   dim.domain_code === 'ANM-02' ? "Spike of high-severity events compared to a 30-day trailing baseline." :
+                   dim.domain_code === 'CMP-03' ? "Verification of required compliance documentation against NCIIPC standards." :
+                   dim.domain_code === 'PRV-04' ? "Deviation of anomaly frequency compared against the sector average baseline." :
+                   dim.domain_code === 'AST-05' ? "Number of distinct critical assets currently exposed to high-severity alerts." :
+                   dim.domain_code === 'FID-06' ? "Ratio of unique incident patterns identified after removing duplicate/repeated alerts." : ""}
                 </p>
 
-                <div className="bg-slate-50 border border-slate-100 rounded-xl p-4">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                    Fidelity Gap / Finding
+                <div className="bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-col gap-2">
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                      Trigger Context
+                    </div>
+                    <div className="text-[11px] font-medium text-slate-700">
+                      {dim.evaluation_metric}
+                    </div>
                   </div>
-                  <div className="text-sm font-medium text-slate-800">
-                    {dim.fidelity_gap}
+                  <div>
+                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                      Fidelity Gap / Finding
+                    </div>
+                    <div className="text-xs font-bold text-slate-800">
+                      {dim.fidelity_gap}
+                    </div>
                   </div>
                 </div>
               </div>
               
-              <div className="px-5 py-4 border-t border-slate-100 flex items-center justify-between text-xs mt-auto">
-                <span className="text-slate-500">
-                  Findings Count: <span className="font-bold text-slate-900 font-mono">{dim.findings_count}</span>
-                </span>
-                <button 
-                  onClick={() => onNavigate('evidence-view', data.cse_id, dim.domain_code)}
-                  className="font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1 transition-colors"
-                >
-                  Forensic Audit <ChevronRight className="w-3.5 h-3.5" />
-                </button>
+              <div className="px-5 py-3 border-t border-slate-100 flex items-center justify-end text-xs mt-auto bg-slate-50/50 rounded-b-2xl h-12">
+                {dim.findings_count > 0 ? (
+                  <button 
+                    onClick={() => onNavigate('evidence-view', data.cse_id, dim.domain_code)}
+                    className="font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1 transition-colors cursor-pointer"
+                  >
+                    Forensic Audit <ChevronRight className="w-3.5 h-3.5" />
+                  </button>
+                ) : (
+                  <span className="font-bold text-slate-400">No Forensic Evidence</span>
+                )}
               </div>
             </div>
           );
