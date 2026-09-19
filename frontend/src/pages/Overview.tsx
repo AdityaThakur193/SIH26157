@@ -96,9 +96,10 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
     }
   };
 
-  // Prepare chart data based on real entities
+  // Prepare chart data based on real per-entity counts from the backend
   const chartData = (data?.entities || []).map(e => ({
-    name: e.name.substring(0, 10),
+    name: e.name.length > 12 ? e.name.substring(0, 12) + '…' : e.name,
+    fullName: e.name,
     alerts: e.alerts_count,
     cases: e.cases_count
   }));

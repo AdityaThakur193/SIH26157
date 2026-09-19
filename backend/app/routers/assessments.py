@@ -71,6 +71,7 @@ def _compute_fidelity(raw_logs, dedup_logs, clusters):
 @router.get("/overview", response_model=NationalOverviewResponse)
 def get_national_overview():
     metrics = vectorstore.get_dashboard_metrics()
+    per_entity = vectorstore.get_per_entity_overview()
     
     # Dynamically fetch entities from ledger
     db_entities = get_all_entities()
@@ -79,8 +80,13 @@ def get_national_overview():
     for row in db_entities:
         case_id = row[0]
         name = row[1]
-        sector = row[2] or "Unknown Sector"
+        sector = row[2] or "General"
         score = row[3] or 0
+        
+        # Use per-entity metrics if available, otherwise fallback
+        entity_data = per_entity.get(name, {})
+        entity_alerts = entity_data.get("alerts", 0)
+        entity_cases = entity_data.get("cases", 0)
         
         dynamic_entities.append(
             CSESummary(
@@ -89,8 +95,8 @@ def get_national_overview():
                 sector=sector,
                 tier="Scheduled",
                 period=datetime.now().strftime("%B %Y"),
-                alerts_count=metrics["alerts_analyzed"],
-                cases_count=metrics["cases_analyzed"],
+                alerts_count=entity_alerts,
+                cases_count=entity_cases,
                 attention_level="CRITICAL" if score > 80 else "NOMINAL",
                 key_concern="Awaiting manual review" if score > 80 else "No immediate concerns",
                 review_status="Pending"
@@ -98,7 +104,7 @@ def get_national_overview():
         )
         
     return NationalOverviewResponse(
-        active_entities=metrics["active_entities"],
+        active_entities=len(dynamic_entities),
         alerts_analyzed=metrics["alerts_analyzed"],
         cases_analyzed=metrics["cases_analyzed"],
         supervisory_findings=metrics["supervisory_findings"],
@@ -108,11 +114,15 @@ def get_national_overview():
 
 @router.get("/{cse_id}", response_model=CSEDetailResponse)
 def get_cse_detail(cse_id: str, sector: str = "General"):
-    metrics = vectorstore.get_dashboard_metrics()
-    clusters = vectorstore.get_all_clusters()
+    # Resolve the entity_name from the cse_id
+    entity_name = get_entity_name(cse_id)
     
-    # 1. Threat Analytics
-    score_result = scoring_engine.evaluate_clusters(clusters)
+    # Get PER-ENTITY metrics and clusters instead of global
+    entity_metrics = vectorstore.get_entity_metrics(entity_name)
+    entity_clusters = vectorstore.get_entity_clusters(entity_name)
+    
+    # 1. Threat Analytics — scoped to this entity's clusters
+    score_result = scoring_engine.evaluate_clusters(entity_clusters)
     rules_fired_str = ", ".join([r['rule'] for r in score_result['fired_rules'][:2]]) if score_result['fired_rules'] else "No severe rules triggered"
     
     # Write the score to ledger to enable Peer Variance engine
@@ -124,15 +134,15 @@ def get_cse_detail(cse_id: str, sector: str = "General"):
     # 4. Peer Variance
     peer_res = peer_engine.evaluate_variance(cse_id, score_result["risk_score"], sector)
     
-    # 2. Anomaly Metrics
-    anomaly_res = anomaly_engine.evaluate_temporal_anomalies(clusters)
+    # 2. Anomaly Metrics — scoped to this entity's clusters
+    anomaly_res = anomaly_engine.evaluate_temporal_anomalies(entity_clusters)
     
-    # 5. Asset Exposure
-    asset_res = asset_engine.evaluate_exposure(clusters)
+    # 5. Asset Exposure — scoped to this entity's clusters
+    asset_res = asset_engine.evaluate_exposure(entity_clusters)
     
-    # 6. Alert Fidelity
-    raw_logs = metrics["alerts_analyzed"]
-    dedup_logs = metrics["cases_analyzed"]
+    # Use per-entity metrics
+    raw_logs = entity_metrics["alerts_analyzed"]
+    dedup_logs = entity_metrics["cases_analyzed"]
     noise_reduction = 0
     if raw_logs > 0:
         noise_reduction = (1 - (dedup_logs / raw_logs)) * 100
@@ -151,10 +161,13 @@ def get_cse_detail(cse_id: str, sector: str = "General"):
             "fidelity_gap": "No compliance data ingested",
             "findings_count": 0
         }
+    
+    # Per-entity high severity count
+    high_sev = entity_metrics.get("supervisory_findings", 0)
         
     return CSEDetailResponse(
         cse_id=cse_id.upper(),
-        cse_name=get_entity_name(cse_id),
+        cse_name=entity_name,
         tier="Scheduled",
         audit_window=datetime.now().strftime("%B %Y"),
         examiner="Automated SAT-SA Engine",
@@ -162,7 +175,7 @@ def get_cse_detail(cse_id: str, sector: str = "General"):
         alerts_ingested=raw_logs,
         cases_correlated=dedup_logs,
         formal_investigations=len(score_result["fired_rules"]),
-        escalations_logged=metrics["priority_pool_cases"],
+        escalations_logged=high_sev,
         active_anomalies=len(score_result["fired_rules"]),
         peer_variance_index=f"Risk Score: {score_result['risk_score']}/99",
         manual_review_queue_count=len(score_result["fired_rules"]),
@@ -214,7 +227,7 @@ def get_cse_detail(cse_id: str, sector: str = "General"):
             ),
             DimensionMetric(
                 title="6. Alert Fidelity",
-                **_compute_fidelity(raw_logs, dedup_logs, clusters)
+                **_compute_fidelity(raw_logs, dedup_logs, entity_clusters)
             )
         ]
     )

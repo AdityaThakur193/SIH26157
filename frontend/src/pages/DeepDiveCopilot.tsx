@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Sparkles, 
   Send, 
@@ -42,10 +42,10 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
   ]);
 
   const quickPrompts = [
-    'Explain the 350 high-severity brute-force and privilege abuse findings.',
-    'Detail off-hours credential access and peer variance anomalies.',
-    'Summarize ISMS policy compliance gaps against NCIIPC control baseline.',
-    'Evaluate SimHash cluster compression integrity and evidence authenticity.'
+    `What are the most critical threat findings for ${cseId}?`,
+    `Analyze the anomaly patterns and temporal spikes detected in ${cseId}.`,
+    `What compliance gaps exist for ${cseId} against NCIIPC baseline controls?`,
+    `Summarize the peer variance and risk posture for ${cseId} compared to sector peers.`
   ];
 
   const handleSend = async (customQuery?: string) => {
@@ -66,7 +66,7 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
     try {
       const response: CopilotResponse = await askCopilot({
         query: textToSend,
-        case_id: cseId || 'CASE-2026-ALP-09'
+        case_id: cseId
       });
 
       const copilotTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -112,7 +112,7 @@ export const DeepDiveCopilot: React.FC<DeepDiveCopilotProps> = ({ cseId, onNavig
             <div className="flex items-center gap-2 mt-0.5">
               <h1 className="text-2xl font-bold text-gray-900">Enclave Forensic Copilot</h1>
               <span className="font-mono text-xs text-primary-purple bg-purple-50 border border-purple-200 px-2 py-0.5 rounded font-bold">
-                {cseId || 'CASE-2026-ALP-09'}
+                {cseId || 'No Entity Selected'}
               </span>
             </div>
           </div>

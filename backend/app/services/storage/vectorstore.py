@@ -37,9 +37,20 @@ class VectorStoreEngine:
                 last_seen UNINDEXED
             )
         ''')
+        # Mapping table to track which entity each cluster row belongs to
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS cluster_entity_map (
+                rowid_ref INTEGER,
+                entity_name TEXT
+            )
+        ''')
+        # Index for fast per-entity lookups
+        cursor.execute('''
+            CREATE INDEX IF NOT EXISTS idx_cluster_entity ON cluster_entity_map(entity_name)
+        ''')
         self.conn.commit()
 
-    def store_clusters(self, clusters: List[LogCluster]):
+    def store_clusters(self, clusters: List[LogCluster], entity_name: str = ""):
         if not clusters:
             return
             
@@ -57,10 +68,18 @@ class VectorStoreEngine:
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             ''', (fp_str, c.event_type, source_ips_json, c.dest_ip, c.severity, c.sample_raw, c.count, c.first_seen, c.last_seen))
             
+            # Track entity ownership
+            fts_rowid = cursor.lastrowid
+            if entity_name:
+                cursor.execute(
+                    'INSERT INTO cluster_entity_map (rowid_ref, entity_name) VALUES (?, ?)',
+                    (fts_rowid, entity_name)
+                )
+            
             ids.append(fp_str)
             doc = f"Event: {c.event_type}. Sources: {source_ips_json}. Target: {c.dest_ip}. Payload: {c.sample_raw}"
             documents.append(doc)
-            metadatas.append({"count": c.count, "severity": c.severity})
+            metadatas.append({"count": c.count, "severity": c.severity, "entity_name": entity_name})
             
         self.conn.commit()
         
@@ -121,6 +140,81 @@ class VectorStoreEngine:
             "priority_pool_cases": high_severity_clusters
         }
 
+    def get_entity_metrics(self, entity_name: str) -> Dict[str, Any]:
+        """Calculates metrics for a SINGLE entity using the cluster_entity_map."""
+        cursor = self.conn.cursor()
+        
+        # Check if this entity has ANY mapped clusters
+        cursor.execute(
+            "SELECT COUNT(*) FROM cluster_entity_map WHERE entity_name = ?",
+            (entity_name,)
+        )
+        mapped_count = cursor.fetchone()[0]
+        
+        if mapped_count == 0:
+            # Entity exists in ledger but has no parseable SOC clusters
+            return {
+                "alerts_analyzed": 0,
+                "cases_analyzed": 0,
+                "supervisory_findings": 0,
+                "priority_pool_cases": 0
+            }
+        
+        # Get all rowids belonging to this entity
+        cursor.execute("""
+            SELECT f.count, f.severity
+            FROM incidents_fts f
+            INNER JOIN cluster_entity_map m ON f.rowid = m.rowid_ref
+            WHERE m.entity_name = ?
+        """, (entity_name,))
+        rows = cursor.fetchall()
+        
+        total_raw = sum(r[0] for r in rows)
+        dedup_count = len(rows)
+        high_severity = sum(1 for r in rows if r[1] and r[1].upper() in ('HIGH', 'CRITICAL'))
+        
+        return {
+            "alerts_analyzed": total_raw,
+            "cases_analyzed": dedup_count,
+            "supervisory_findings": high_severity,
+            "priority_pool_cases": high_severity
+        }
+
+    def get_entity_clusters(self, entity_name: str) -> List[LogCluster]:
+        """Get clusters for a specific entity only."""
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            SELECT f.fingerprint, f.event_type, f.source_ips, f.dest_ip, f.severity, f.sample_raw, f.count, f.first_seen, f.last_seen
+            FROM incidents_fts f
+            INNER JOIN cluster_entity_map m ON f.rowid = m.rowid_ref
+            WHERE m.entity_name = ?
+        """, (entity_name,))
+        rows = cursor.fetchall()
+        
+        if not rows:
+            # Entity has no parseable clusters — return empty
+            return []
+        
+        clusters = []
+        import json
+        for r in rows:
+            from app.models.schemas import UnifiedLogRecord
+            rec = UnifiedLogRecord(
+                timestamp=r[7] if len(r)>7 else "N/A",
+                source_ip="N/A",
+                dest_ip=r[3],
+                event_type=r[1],
+                severity=r[4],
+                raw=r[5]
+            )
+            c = LogCluster(int(r[0]), rec)
+            c.count = r[6]
+            c.source_ips = json.loads(r[2])
+            c.first_seen = r[7] if len(r)>7 else "N/A"
+            c.last_seen = r[8] if len(r)>8 else "N/A"
+            clusters.append(c)
+        return clusters
+
     def get_all_clusters(self) -> List[LogCluster]:
         cursor = self.conn.cursor()
         cursor.execute('SELECT fingerprint, event_type, source_ips, dest_ip, severity, sample_raw, count, first_seen, last_seen FROM incidents_fts')
@@ -147,9 +241,25 @@ class VectorStoreEngine:
             clusters.append(c)
         return clusters
 
+    def get_per_entity_overview(self) -> Dict[str, Dict[str, int]]:
+        """Returns per-entity alert and case counts for the overview chart."""
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            SELECT m.entity_name, SUM(f.count) as total_raw, COUNT(*) as cluster_count
+            FROM incidents_fts f
+            INNER JOIN cluster_entity_map m ON f.rowid = m.rowid_ref
+            GROUP BY m.entity_name
+        """)
+        rows = cursor.fetchall()
+        result = {}
+        for r in rows:
+            result[r[0]] = {"alerts": r[1], "cases": r[2]}
+        return result
+
     def reset_store(self):
         cursor = self.conn.cursor()
         cursor.execute("DELETE FROM incidents_fts")
+        cursor.execute("DELETE FROM cluster_entity_map")
         self.conn.commit()
         try:
             self.chroma_client.delete_collection("sat_sa_incidents")

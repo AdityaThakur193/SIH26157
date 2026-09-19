@@ -3,7 +3,7 @@ import {
   ArrowLeft, Upload, CheckCircle2, AlertOctagon, Sparkles, FileText, ChevronRight
 } from 'lucide-react';
 import { getAssessment, ingestCompliance } from '../services/api';
-import { CSEDetailResponse } from '../types/api';
+import { CSEDetailResponse, DimensionMetric } from '../types/api';
 
 interface AssessmentDossierProps {
   cseId: string;

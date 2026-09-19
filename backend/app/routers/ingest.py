@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/v1", tags=["Ingestion"])
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../"))
 DATA_SAMPLES_DIR = os.path.join(PROJECT_ROOT, "data_samples")
 
-def process_file_pipeline(file_path: str):
+def process_file_pipeline(file_path: str, entity_name: str = ""):
     parser = LogParserEngine()
     simhash_engine = SimHashEngine()
     raw_count = 0
@@ -24,7 +24,7 @@ def process_file_pipeline(file_path: str):
     clusters = simhash_engine.get_clusters()
     dedup_count = len(clusters)
     vectorstore = VectorStoreEngine()
-    vectorstore.store_clusters(clusters)
+    vectorstore.store_clusters(clusters, entity_name=entity_name)
     return raw_count, dedup_count
 
 @router.post("/ingest", response_model=IngestResponse)
@@ -43,7 +43,7 @@ async def ingest_evidence(
         case_id = f"CASE-2026-{entity_name.upper()[:3]}-09"
         log_to_ledger(case_id, entity_name, file.filename, file_hash)
         
-        raw_count, dedup_count = process_file_pipeline(saved_path)
+        raw_count, dedup_count = process_file_pipeline(saved_path, entity_name=entity_name)
             
         return IngestResponse(
             case_id=case_id,
