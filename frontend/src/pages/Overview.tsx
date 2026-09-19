@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { 
   Building2, Layers, AlertTriangle, FileSearch, Search, ChevronRight, 
   RefreshCw, Upload, Trash2, AlertOctagon, X, CheckCircle2,
@@ -15,7 +16,7 @@ import {
 } from 'recharts';
 
 interface OverviewProps {
-  onNavigate: (view: 'overview' | 'evidence' | 'assessment' | 'copilot', cseId?: string) => void;
+  onNavigate: (view: 'overview' | 'evidence' | 'assessment' | 'assessments' | 'copilot', cseId?: string) => void;
 }
 
 export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
@@ -68,29 +69,35 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
   // GSAP Choreographed Entry
   useGSAP(() => {
     if (!loading && data) {
-      const ctx = gsap.context(() => {
-        gsap.from('.overview-card', {
-          opacity: 0,
-          y: 20,
-          stagger: 0.08,
-          duration: 0.5,
-          ease: 'power2.out',
-          clearProps: 'all'
-        });
-        gsap.from('.overview-section', {
-          opacity: 0,
-          y: 24,
-          stagger: 0.12,
-          duration: 0.6,
-          delay: 0.1,
+      gsap.fromTo(
+        '.overview-card',
+        { opacity: 0, y: 20, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          stagger: 0.07,
+          duration: 0.45,
+          delay: 0.04,
           ease: 'power3.out',
-          clearProps: 'all'
-        });
-      }, containerRef);
-
-      return () => ctx.revert();
+          clearProps: 'transform,opacity,scale'
+        }
+      );
+      gsap.fromTo(
+        '.overview-section',
+        { opacity: 0, y: 24 },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.1,
+          duration: 0.55,
+          delay: 0.12,
+          ease: 'power3.out',
+          clearProps: 'transform,opacity'
+        }
+      );
     }
-  }, [loading, data]);
+  }, { scope: containerRef, dependencies: [loading, data] });
 
   const sectors = ['ALL', 'Banking & Financial', 'Energy & Power', 'Telecommunications', 'Defense'];
 
@@ -127,13 +134,22 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
     }
   };
 
-  // Prepare chart data based on real per-entity counts from the backend
-  const chartData = (data?.entities || []).map(e => ({
+  // Entity metrics for Baseline Deviations & table
+  const entityChartData = (data?.entities || []).map(e => ({
     name: e.name.length > 12 ? e.name.substring(0, 12) + '…' : e.name,
     fullName: e.name,
     alerts: e.alerts_count,
     cases: e.cases_count
   }));
+
+  // Chronological timeline for Telemetry Ingestion & Anomaly Trends (Option A)
+  const timelineChartData = (data?.timeline && data.timeline.length > 0)
+    ? data.timeline
+    : entityChartData.map(e => ({
+        period: e.name,
+        alerts: e.alerts,
+        cases: e.cases
+      }));
 
   // Baseline Health Math
   const totalAnalyzed = data?.cases_analyzed || 0;
@@ -224,7 +240,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       {/* 4 KPI Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1 */}
-        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Evaluated CSEs</span>
             <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
@@ -232,7 +248,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             </div>
           </div>
           <div className="text-3xl font-bold text-slate-900 mb-2 font-mono">
-            {chartData.length}
+            {entityChartData.length}
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
@@ -241,7 +257,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
         </div>
 
         {/* Card 2 */}
-        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Alerts Analyzed</span>
             <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center">
@@ -258,7 +274,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
         </div>
 
         {/* Card 3 */}
-        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Flagged Signals</span>
             <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
@@ -275,7 +291,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
         </div>
 
         {/* Card 4 */}
-        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+        <div className="overview-card bg-white rounded-xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Priority Cases</span>
             <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
@@ -305,7 +321,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                   Live Feed
                 </span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">Entity volume ingestion frequency mapped against supervisor-flagged anomalies.</p>
+              <p className="text-xs text-slate-500 mt-1">Chronological alert ingestion volume mapped against supervisor-flagged anomaly spikes.</p>
             </div>
             <div className="flex gap-4">
               <div className="flex items-center gap-2">
@@ -320,9 +336,9 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
           </div>
           
           <div className="flex-1 min-h-[260px] w-full">
-            {chartData.length > 0 ? (
+            {timelineChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <ComposedChart data={chartData} margin={{ top: 20, right: 10, left: -15, bottom: 0 }}>
+                <ComposedChart data={timelineChartData} margin={{ top: 20, right: 15, left: -10, bottom: 0 }}>
                   <defs>
                     <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor="#6366F1" stopOpacity={0.95} />
@@ -330,7 +346,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
-                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748B' }} dy={10} />
+                  <XAxis dataKey="period" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: '#64748B' }} dy={10} />
                   {/* Left Y-Axis: Raw Alert Volume */}
                   <YAxis 
                     yAxisId="left"
@@ -501,7 +517,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
               <p className="text-xs text-slate-500 mt-1">Ranked by supervisory deviation threshold.</p>
             </div>
             <button 
-              onClick={() => { setSelectedSector('ALL'); setSearchQuery(''); }}
+              onClick={() => onNavigate('assessments')}
               className="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1 cursor-pointer"
             >
               View All <ChevronRight className="w-3 h-3" />
@@ -651,7 +667,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
 
         <div className="flex flex-col md:flex-row items-center gap-6">
           <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-3 gap-6 border-r border-slate-100 pr-6">
-            {chartData.slice(0, 3).map((entity, i) => {
+            {entityChartData.slice(0, 3).map((entity, i) => {
               const colors = ['bg-rose-600', 'bg-indigo-600', 'bg-teal-600'];
               const ratio = entity.alerts > 0 ? (entity.cases / entity.alerts) * 100 : 0;
               return (
@@ -681,8 +697,8 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       </div>
 
       {/* Permanent Purge Confirmation Modal */}
-      {showResetModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4 animate-in fade-in duration-150">
+      {showResetModal && createPortal(
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-150">
           <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xl max-w-md w-full space-y-5 animate-in zoom-in-95 duration-150">
             <div className="flex items-start justify-between">
               <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
@@ -731,19 +747,20 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
               >
                 {isResetting ? (
                   <>
-                    <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    <span>Purging Enclave...</span>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Purging...</span>
                   </>
                 ) : (
                   <>
-                    <Trash2 className="w-3.5 h-3.5" />
+                    <Trash2 className="w-4 h-4" />
                     <span>Purge & Clean Slate</span>
                   </>
                 )}
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

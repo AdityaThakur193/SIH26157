@@ -5,7 +5,9 @@ import {
   IngestResponse,
   ComplianceIngestResponse,
   CopilotRequest,
-  CopilotResponse
+  CopilotResponse,
+  EvidenceListResponse,
+  EvidenceDetail
 } from '../types/api';
 
 const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '');
@@ -72,7 +74,36 @@ export async function askCopilot(payload: CopilotRequest): Promise<CopilotRespon
   });
 }
 
-// 7. Reset / Purge Enclave Store (POST /api/v1/assessments/reset)
+// 6b. Get Evidence Cluster Detail (GET /api/v1/copilot/evidence/{fingerprint})
+export async function getEvidenceDetail(fingerprint: string): Promise<any> {
+  return request<any>(`${API_PREFIX}/copilot/evidence/${encodeURIComponent(fingerprint)}`);
+}
+
+// 7. Adjudicate Entity (POST /api/v1/assessments/{cse_id}/adjudicate)
+export async function adjudicateEntity(
+  cseId: string, 
+  verdict: 'APPROVED' | 'ESCALATED' | 'REMEDIATION_REQUIRED' | 'Pending', 
+  remarks?: string,
+  officerId?: string
+): Promise<{ status: string; cse_id: string; verdict: string; remarks: string; message: string }> {
+  return request<{ status: string; cse_id: string; verdict: string; remarks: string; message: string }>(
+    `${API_PREFIX}/assessments/${encodeURIComponent(cseId)}/adjudicate`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ verdict, remarks: remarks || '', officer_id: officerId || 'EXAMINER' })
+    }
+  );
+}
+
+// 9. Get Evidence List (GET /api/v1/assessments/{cse_id}/evidence)
+export async function getEvidenceList(cseId: string, domainCode?: string): Promise<EvidenceListResponse> {
+  let url = `${API_PREFIX}/assessments/${encodeURIComponent(cseId)}/evidence`;
+  if (domainCode) {
+    url += `?domain_code=${encodeURIComponent(domainCode)}`;
+  }
+  return request<EvidenceListResponse>(url);
+}
 export async function resetDatabase(): Promise<{ status: string; message: string }> {
   return request<{ status: string; message: string }>(`${API_PREFIX}/assessments/reset`, {
     method: 'POST',

@@ -1,4 +1,4 @@
-﻿// 1. Root System Health
+// 1. Root System Health
 export interface SystemHealth {
   status: string;         // "ACTIVE"
   node: string;           // "NCIIPC Air-Gapped Node #04"
@@ -20,6 +20,12 @@ export interface CSESummary {
   review_status: string;  // "Pending" | "In Progress" | "Completed"
 }
 
+export interface TimelinePoint {
+  period: string;
+  alerts: number;
+  cases: number;
+}
+
 export interface NationalOverviewResponse {
   active_entities: number;      // Total registered entities
   alerts_analyzed: number;      // Total raw logs ingested
@@ -27,6 +33,7 @@ export interface NationalOverviewResponse {
   supervisory_findings: number; // High-severity findings count (350)
   priority_pool_cases: number;  // Review pool cases (350)
   entities: CSESummary[];       // Array of entities for table
+  timeline?: TimelinePoint[];   // Chronological time series trend
 }
 
 // 3. Individual CSE Assessment Types
@@ -89,4 +96,20 @@ export interface CopilotResponse {
   answer: string;
   findings_flagged: boolean;
   evidence_sources: string[];
+}
+
+export interface EvidenceDetail {
+  fingerprint: string;
+  event_type: string;
+  source_ips: string[];
+  dest_ip: string;
+  severity: string;
+  sample_raw: string;
+  count: number;
+  first_seen: string;
+  last_seen: string;
+}
+
+export interface EvidenceListResponse {
+  clusters: EvidenceDetail[];
 }

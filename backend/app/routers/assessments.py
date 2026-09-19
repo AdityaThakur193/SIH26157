@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException
-from app.models.schemas import NationalOverviewResponse, CSESummary, CSEDetailResponse, DimensionMetric
+from app.models.schemas import NationalOverviewResponse, CSESummary, CSEDetailResponse, DimensionMetric, AdjudicationRequest
 from app.services.storage.vectorstore import VectorStoreEngine
 from app.services.scoring.threat_score import ThreatScoringEngine
 from app.services.scoring.anomaly_engine import AnomalyEngine
 from app.services.scoring.asset_exposure import AssetExposureEngine
 from app.services.scoring.peer_variance import PeerVarianceEngine
-from app.services.ingestion.hash_verifier import update_entity_score, get_all_entities, get_entity_name, reset_ledger
+from app.services.ingestion.hash_verifier import update_entity_score, get_all_entities, get_entity_name, reset_ledger, record_adjudication
 import os
 import json
 from datetime import datetime
@@ -88,6 +88,12 @@ def get_national_overview():
         entity_alerts = entity_data.get("alerts", 0)
         entity_cases = entity_data.get("cases", 0)
         
+        verdict = row[4] if len(row) > 4 and row[4] else None
+        remarks = row[5] if len(row) > 5 and row[5] else None
+        
+        status_label = verdict if verdict else "Pending"
+        concern = remarks if remarks else ("Awaiting manual review" if score > 80 else "No immediate concerns")
+        
         dynamic_entities.append(
             CSESummary(
                 id=case_id,
@@ -98,10 +104,12 @@ def get_national_overview():
                 alerts_count=entity_alerts,
                 cases_count=entity_cases,
                 attention_level="CRITICAL" if score > 80 else "NOMINAL",
-                key_concern="Awaiting manual review" if score > 80 else "No immediate concerns",
-                review_status="Pending"
+                key_concern=concern,
+                review_status=status_label
             )
         )
+        
+    timeline_data = vectorstore.get_timeline_metrics()
         
     return NationalOverviewResponse(
         active_entities=len(dynamic_entities),
@@ -109,8 +117,32 @@ def get_national_overview():
         cases_analyzed=metrics["cases_analyzed"],
         supervisory_findings=metrics["supervisory_findings"],
         priority_pool_cases=metrics["priority_pool_cases"],
-        entities=dynamic_entities
+        entities=dynamic_entities,
+        timeline=timeline_data
     )
+
+@router.get("/{cse_id}/evidence")
+def get_cse_evidence(cse_id: str, domain_code: str = None):
+    entity_name = get_entity_name(cse_id)
+    clusters = vectorstore.get_entity_clusters(entity_name)
+    
+    if domain_code == "DET-01":
+        clusters = [c for c in clusters if c.severity.upper() in ["HIGH", "CRITICAL"]]
+    elif domain_code == "FID-06":
+        clusters = sorted(clusters, key=lambda x: x.count, reverse=True)[:50]
+        
+    results = []
+    for c in clusters:
+        d = c.to_dict()
+        import json
+        if isinstance(d.get("source_ips"), str):
+            try:
+                d["source_ips"] = json.loads(d["source_ips"])
+            except:
+                pass
+        results.append(d)
+        
+    return {"clusters": results}
 
 @router.get("/{cse_id}", response_model=CSEDetailResponse)
 def get_cse_detail(cse_id: str, sector: str = "General"):
@@ -231,6 +263,26 @@ def get_cse_detail(cse_id: str, sector: str = "General"):
             )
         ]
     )
+
+@router.post("/{cse_id}/adjudicate")
+def adjudicate_entity(cse_id: str, request: AdjudicationRequest):
+    """Records formal human examiner adjudication / verdict for a Critical Sector Entity."""
+    try:
+        record_adjudication(
+            cse_id=cse_id,
+            verdict=request.verdict,
+            remarks=request.remarks or "",
+            officer_id=request.officer_id or "EXAMINER"
+        )
+        return {
+            "status": "SUCCESS",
+            "cse_id": cse_id,
+            "verdict": request.verdict,
+            "remarks": request.remarks,
+            "message": f"Case {cse_id} successfully adjudicated with verdict: {request.verdict}"
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Adjudication failed: {str(e)}")
 
 @router.post("/reset")
 def reset_all_data():

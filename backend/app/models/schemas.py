@@ -21,6 +21,16 @@ class CSESummary(BaseModel):
     key_concern: str
     review_status: str
 
+class AdjudicationRequest(BaseModel):
+    verdict: str # APPROVED, ESCALATED, REMEDIATION_REQUIRED, PENDING
+    remarks: Optional[str] = ""
+    officer_id: Optional[str] = "EXAMINER"
+
+class TimelinePoint(BaseModel):
+    period: str
+    alerts: int
+    cases: int
+
 class NationalOverviewResponse(BaseModel):
     active_entities: int
     alerts_analyzed: int
@@ -28,6 +38,7 @@ class NationalOverviewResponse(BaseModel):
     supervisory_findings: int
     priority_pool_cases: int
     entities: List[CSESummary]
+    timeline: Optional[List[TimelinePoint]] = []
 
 class DimensionMetric(BaseModel):
     title: str

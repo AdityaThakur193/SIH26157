@@ -1,7 +1,7 @@
 import chromadb
 import sqlite3
 import os
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from app.services.deduplication.simhash import LogCluster
 
 # Anchor to project root: SAT-SA
@@ -241,6 +241,31 @@ class VectorStoreEngine:
             clusters.append(c)
         return clusters
 
+    def get_cluster_by_fingerprint(self, fingerprint: str) -> Optional[Dict[str, Any]]:
+        """Look up a specific incident evidence cluster by fingerprint."""
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            SELECT fingerprint, event_type, source_ips, dest_ip, severity, sample_raw, count, first_seen, last_seen
+            FROM incidents_fts
+            WHERE fingerprint = ?
+            LIMIT 1
+        """, (fingerprint,))
+        r = cursor.fetchone()
+        if not r:
+            return None
+        import json
+        return {
+            "fingerprint": str(r[0]),
+            "event_type": r[1] or "Unknown",
+            "source_ips": json.loads(r[2]) if r[2] else [],
+            "dest_ip": r[3] or "N/A",
+            "severity": r[4] or "Medium",
+            "sample_raw": r[5] or "",
+            "count": r[6] or 1,
+            "first_seen": r[7] or "N/A",
+            "last_seen": r[8] or "N/A"
+        }
+
     def get_per_entity_overview(self) -> Dict[str, Dict[str, int]]:
         """Returns per-entity alert and case counts for the overview chart."""
         cursor = self.conn.cursor()
@@ -255,6 +280,45 @@ class VectorStoreEngine:
         for r in rows:
             result[r[0]] = {"alerts": r[1], "cases": r[2]}
         return result
+
+    def get_timeline_metrics(self) -> List[Dict[str, Any]]:
+        """Returns chronological time-series buckets from real log timestamps."""
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            SELECT substr(first_seen, 1, 7) as ym, SUM(count) as total_raw, COUNT(*) as cluster_count
+            FROM incidents_fts
+            WHERE first_seen IS NOT NULL AND first_seen != 'N/A' AND length(first_seen) >= 7
+            GROUP BY ym
+            ORDER BY ym ASC
+        """)
+        rows = cursor.fetchall()
+        if not rows:
+            return []
+        
+        # Take the most recent 10 active periods to show a detailed chronological trend
+        selected_rows = rows[-10:] if len(rows) > 10 else rows
+        
+        timeline = []
+        month_names = {
+            "01": "Jan", "02": "Feb", "03": "Mar", "04": "Apr",
+            "05": "May", "06": "Jun", "07": "Jul", "08": "Aug",
+            "09": "Sep", "10": "Oct", "11": "Nov", "12": "Dec"
+        }
+        for r in selected_rows:
+            ym = r[0]
+            parts = ym.split("-")
+            label = ym
+            if len(parts) == 2:
+                year = parts[0][2:]
+                mon = month_names.get(parts[1], parts[1])
+                label = f"{mon} '{year}"
+            
+            timeline.append({
+                "period": label,
+                "alerts": r[1] or 0,
+                "cases": r[2] or 0
+            })
+        return timeline
 
     def reset_store(self):
         cursor = self.conn.cursor()

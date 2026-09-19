@@ -1,4 +1,4 @@
-ï»¿import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   UploadCloud, 
   Terminal, 
@@ -92,7 +92,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Header */}
       <div>
-        <div className="flex items-center space-x-2 text-primary-purple font-semibold text-xs tracking-wider uppercase">
+        <div className="flex items-center space-x-2 text-primary font-semibold text-xs tracking-wider uppercase">
           <ShieldCheck className="w-4 h-4" />
           <span>Screen 02 & 03: Evidence Acquisition & Verification</span>
         </div>
@@ -104,9 +104,9 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Upload & Configuration Form (7 cols) */}
-        <div className="lg:col-span-7 bg-white rounded-2xl border border-card-border p-6 shadow-card space-y-6">
+        <div className="lg:col-span-7 bg-white rounded-2xl border border-outline p-6 shadow-sm space-y-6">
           <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-            <FileCheck className="w-5 h-5 text-primary-purple" />
+            <FileCheck className="w-5 h-5 text-primary" />
             Entity Evidence Metadata
           </h2>
 
@@ -120,7 +120,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
               onChange={(e) => setEntityName(e.target.value)}
               placeholder="e.g. Alpha Bank Ltd"
               disabled={isProcessing}
-              className="w-full px-4 py-2.5 rounded-xl border border-card-border bg-gray-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary-purple/20 focus:border-primary-purple transition-colors font-medium text-gray-800"
+              className="w-full px-4 py-2.5 rounded-xl border border-outline bg-gray-50/50 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-colors font-medium text-gray-800"
             />
           </div>
 
@@ -136,8 +136,8 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
               onClick={() => !isProcessing && fileInputRef.current?.click()}
               className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
                 isDragging 
-                  ? 'border-primary-purple bg-primary-container/40' 
-                  : 'border-gray-200 hover:border-primary-purple/50 bg-[#FAFBFD]'
+                  ? 'border-primary bg-primary-container/40' 
+                  : 'border-gray-200 hover:border-primary/50 bg-[#FAFBFD]'
               }`}
             >
               <input
@@ -149,7 +149,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                 disabled={isProcessing}
               />
               
-              <div className="w-12 h-12 rounded-2xl bg-primary-container text-primary-purple flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 rounded-2xl bg-primary-container text-primary flex items-center justify-center mx-auto mb-3">
                 <UploadCloud className="w-6 h-6" />
               </div>
 
@@ -157,7 +157,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                 <div>
                   <p className="text-sm font-bold text-gray-800">{selectedFile.name}</p>
                   <p className="text-xs text-gray-500 mt-1">
-                    {(selectedFile.size / 1024).toFixed(1)} KB â€¢ Ready to ingest
+                    {(selectedFile.size / 1024).toFixed(1)} KB • Ready to ingest
                   </p>
                   <span className="inline-block mt-3 px-3 py-1 bg-teal-50 text-accent-teal text-xs font-semibold rounded-lg border border-teal-200">
                     Click to swap file
@@ -173,7 +173,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                   </p>
                   <button
                     type="button"
-                    className="mt-4 px-4 py-2 bg-white border border-card-border hover:border-gray-300 text-xs font-semibold text-gray-700 rounded-xl shadow-xs transition-colors"
+                    className="mt-4 px-4 py-2 bg-white border border-outline hover:border-gray-300 text-xs font-semibold text-gray-700 rounded-xl shadow-xs transition-colors"
                   >
                     Browse Files
                   </button>
@@ -196,7 +196,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
               className={`w-full py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all ${
                 isProcessing || !selectedFile
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
-                  : 'bg-primary-purple text-white hover:bg-[#4d3e91] active:scale-[0.99]'
+                  : 'bg-primary text-white hover:bg-[#4d3e91] active:scale-[0.99]'
               }`}
             >
               {isProcessing ? (
@@ -216,7 +216,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
 
         {/* Verification Terminal / Execution Status (5 cols) */}
         <div className="lg:col-span-5 flex flex-col space-y-6">
-          <div className="bg-[#191924] rounded-2xl border border-gray-800 p-6 text-white shadow-card flex-1 flex flex-col">
+          <div className="bg-[#191924] rounded-2xl border border-gray-800 p-6 text-white shadow-sm flex-1 flex flex-col">
             <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-4">
               <div className="flex items-center space-x-2">
                 <div className="w-3 h-3 rounded-full bg-red-500/80" />
@@ -281,7 +281,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
 
       {/* Result Card: Displaying Actual Cryptographic & Ingestion Data */}
       {result && (
-        <div className="bg-white rounded-2xl border border-teal-200 p-6 shadow-card bg-linear-to-r from-teal-50/40 via-white to-purple-50/20 space-y-4">
+        <div className="bg-white rounded-2xl border border-teal-200 p-6 shadow-sm bg-linear-to-r from-teal-50/40 via-white to-purple-50/20 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-teal-100 text-accent-teal flex items-center justify-center">
@@ -292,7 +292,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                   Ingestion Cryptographically Committed
                 </h3>
                 <p className="text-xs text-gray-500">
-                  Case ID: <span className="font-mono font-bold text-gray-800">{result.case_id}</span> â€¢ Entity: <span className="font-semibold text-gray-800">{result.entity_name}</span>
+                  Case ID: <span className="font-mono font-bold text-gray-800">{result.case_id}</span> • Entity: <span className="font-semibold text-gray-800">{result.entity_name}</span>
                 </p>
               </div>
             </div>
@@ -303,7 +303,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
-            <div className="p-4 rounded-xl bg-gray-50 border border-card-border">
+            <div className="p-4 rounded-xl bg-gray-50 border border-outline">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                 Raw Telemetry Logs
               </span>
@@ -313,17 +313,17 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
               <p className="text-xs text-gray-400 mt-0.5">Parsed stream events</p>
             </div>
 
-            <div className="p-4 rounded-xl bg-gray-50 border border-card-border">
+            <div className="p-4 rounded-xl bg-gray-50 border border-outline">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                 SimHash Clusters
               </span>
-              <div className="text-2xl font-bold font-mono text-primary-purple mt-1">
+              <div className="text-2xl font-bold font-mono text-primary mt-1">
                 {result.deduplicated_clusters.toLocaleString()}
               </div>
               <p className="text-xs text-gray-400 mt-0.5">Deduplicated unique incident groups</p>
             </div>
 
-            <div className="p-4 rounded-xl bg-gray-50 border border-card-border">
+            <div className="p-4 rounded-xl bg-gray-50 border border-outline">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                 Reduction Compression
               </span>
@@ -353,13 +353,13 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
               onClick={() => onNavigate('overview')}
-              className="px-4 py-2 border border-card-border rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="px-4 py-2 border border-outline rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
             >
               National Overview
             </button>
             <button
               onClick={() => onNavigate('assessment', result.case_id)}
-              className="px-5 py-2 bg-primary-purple hover:bg-[#4d3e91] text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all"
+              className="px-5 py-2 bg-primary hover:bg-[#4d3e91] text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all"
             >
               <span>Inspect CSE Dossier</span>
               <ArrowRight className="w-4 h-4" />

@@ -2,7 +2,18 @@ from fastapi import APIRouter, HTTPException
 from app.models.schemas import CopilotRequest, CopilotResponse
 from app.services.ai.copilot import CopilotEngine
 
+from app.services.storage.vectorstore import VectorStoreEngine
+
 router = APIRouter(prefix="/api/v1/copilot", tags=["AI Copilot"])
+
+@router.get("/evidence/{fingerprint}")
+def get_evidence_detail(fingerprint: str):
+    store = VectorStoreEngine()
+    cluster = store.get_cluster_by_fingerprint(fingerprint)
+    if not cluster:
+        raise HTTPException(status_code=404, detail="Evidence cluster not found")
+    return cluster
+
 @router.post("/query", response_model=CopilotResponse)
 def query_copilot(payload: CopilotRequest):
     try:

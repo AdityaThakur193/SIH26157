@@ -27,6 +27,15 @@ def init_ledger():
             risk_score INTEGER
         )
     ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS adjudications (
+            cse_id TEXT PRIMARY KEY,
+            verdict TEXT,
+            remarks TEXT,
+            officer_id TEXT,
+            timestamp TEXT
+        )
+    ''')
     conn.commit()
     conn.close()
 
@@ -67,14 +76,33 @@ def get_all_entities():
     conn = sqlite3.connect(LEDGER_DB_PATH)
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT a.case_id, a.entity_name, e.sector, e.risk_score 
+        SELECT a.case_id, a.entity_name, e.sector, e.risk_score, adj.verdict, adj.remarks, adj.officer_id, adj.timestamp
         FROM audit_ledger a
         LEFT JOIN entity_scores e ON a.case_id LIKE '%' || e.cse_id || '%'
+        LEFT JOIN adjudications adj ON a.case_id LIKE '%' || adj.cse_id || '%'
         GROUP BY a.entity_name
     ''')
     rows = cursor.fetchall()
     conn.close()
     return rows
+
+def record_adjudication(cse_id: str, verdict: str, remarks: str = "", officer_id: str = "EXAMINER"):
+    init_ledger()
+    conn = sqlite3.connect(LEDGER_DB_PATH)
+    cursor = conn.cursor()
+    timestamp = datetime.utcnow().isoformat()
+    cursor.execute('''
+        INSERT INTO adjudications (cse_id, verdict, remarks, officer_id, timestamp)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(cse_id) DO UPDATE SET 
+            verdict=excluded.verdict, 
+            remarks=excluded.remarks, 
+            officer_id=excluded.officer_id, 
+            timestamp=excluded.timestamp
+    ''', (cse_id.upper(), verdict, remarks, officer_id, timestamp))
+    conn.commit()
+    conn.close()
+    return True
 
 def get_entity_name(cse_id: str) -> str:
     init_ledger()

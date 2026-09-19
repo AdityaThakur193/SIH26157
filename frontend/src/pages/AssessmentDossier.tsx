@@ -9,7 +9,7 @@ import { CSEDetailResponse, DimensionMetric } from '../types/api';
 
 interface AssessmentDossierProps {
   cseId: string;
-  onNavigate: (view: 'overview' | 'evidence' | 'assessment' | 'copilot', cseId?: string) => void;
+  onNavigate: (view: string, cseId?: string, extraData?: string) => void;
 }
 
 export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onNavigate }) => {
@@ -24,28 +24,36 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
 
   useGSAP(() => {
     if (!loading && data) {
-      const ctx = gsap.context(() => {
-        gsap.from('.dossier-stat', {
-          opacity: 0,
-          y: 16,
+      gsap.fromTo(
+        '.dossier-stat',
+        { opacity: 0, y: 16, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
           stagger: 0.06,
           duration: 0.45,
-          ease: 'power2.out',
-          clearProps: 'all'
-        });
-        gsap.from('.dimension-card', {
-          opacity: 0,
-          y: 20,
+          delay: 0.04,
+          ease: 'power3.out',
+          clearProps: 'transform,opacity,scale'
+        }
+      );
+      gsap.fromTo(
+        '.dimension-card',
+        { opacity: 0, y: 20, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
           stagger: 0.08,
           duration: 0.5,
           delay: 0.1,
           ease: 'power3.out',
-          clearProps: 'all'
-        });
-      }, containerRef);
-      return () => ctx.revert();
+          clearProps: 'transform,opacity,scale'
+        }
+      );
     }
-  }, [loading, data]);
+  }, { scope: containerRef, dependencies: [loading, data] });
 
   const fetchDossier = async () => {
     setLoading(true);
@@ -131,7 +139,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-5">
         <div className="flex items-start gap-4">
           <button 
-            onClick={() => onNavigate('overview')}
+            onClick={() => onNavigate('assessments')}
             className="mt-1 p-2 bg-white border border-slate-200 hover:bg-slate-50 active:scale-95 text-slate-600 rounded-xl transition-all cursor-pointer shadow-2xs"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -212,42 +220,42 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
         {/* 6 Stat Boxes */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           
-          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Raw Telemetry</div>
             <div className="inline-block bg-indigo-600 text-white px-2 py-0.5 rounded text-xl font-bold font-mono shadow-xs">
               {data.alerts_ingested.toLocaleString()}
             </div>
           </div>
 
-          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">SimHash Clusters</div>
             <div className="text-xl font-bold text-slate-900 font-mono">
               {data.cases_correlated.toLocaleString()}
             </div>
           </div>
 
-          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Formal Investigations</div>
             <div className="text-xl font-bold text-rose-600 font-mono">
               {data.formal_investigations.toLocaleString()}
             </div>
           </div>
 
-          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Escalations Logged</div>
             <div className="text-xl font-bold text-slate-900 font-mono">
               {data.escalations_logged.toLocaleString()}
             </div>
           </div>
 
-          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Peer Variance</div>
             <div className="text-xl font-bold text-orange-500 font-mono">
               {data.peer_variance_index}
             </div>
           </div>
 
-          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Priority Review</div>
             <div className="text-xl font-bold text-slate-900 font-mono">
               {data.manual_review_queue_count.toLocaleString()}
@@ -279,7 +287,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
           if (dim.status_color === "gray") badgeClass = "bg-slate-100 text-slate-500 border border-slate-200";
 
           return (
-            <div key={i} className="dimension-card bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+            <div key={i} className="dimension-card bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-[box-shadow,border-color] duration-200">
               <div className="p-5 flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 text-[10px] font-bold font-mono tracking-wider">
@@ -310,7 +318,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
                   Findings Count: <span className="font-bold text-slate-900 font-mono">{dim.findings_count}</span>
                 </span>
                 <button 
-                  onClick={() => onNavigate('copilot')}
+                  onClick={() => onNavigate('evidence-view', data.cse_id, dim.domain_code)}
                   className="font-bold text-slate-900 hover:text-indigo-600 flex items-center gap-1 transition-colors"
                 >
                   Forensic Audit <ChevronRight className="w-3.5 h-3.5" />

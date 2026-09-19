@@ -17,19 +17,22 @@ export const Findings: React.FC<FindingsProps> = ({ onNavigate }) => {
 
   useGSAP(() => {
     if (!loading && data) {
-      const ctx = gsap.context(() => {
-        gsap.from('.finding-card', {
-          opacity: 0,
-          y: 20,
+      gsap.fromTo(
+        '.finding-card',
+        { opacity: 0, y: 24, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
           stagger: 0.08,
           duration: 0.5,
-          ease: 'power2.out',
-          clearProps: 'all'
-        });
-      }, containerRef);
-      return () => ctx.revert();
+          delay: 0.04,
+          ease: 'power3.out',
+          clearProps: 'transform,opacity,scale'
+        }
+      );
     }
-  }, [loading, data]);
+  }, { scope: containerRef, dependencies: [loading, data] });
 
   const fetchData = async () => {
     setLoading(true);
@@ -103,7 +106,7 @@ export const Findings: React.FC<FindingsProps> = ({ onNavigate }) => {
             <div
               key={entity.id}
               onClick={() => onNavigate('assessment', entity.id)}
-              className="finding-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:border-indigo-200 hover:-translate-y-0.5 cursor-pointer transition-all duration-200 group"
+              className="finding-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:border-indigo-200 hover:-translate-y-0.5 cursor-pointer transition-[box-shadow,border-color] duration-200 group"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-700">
