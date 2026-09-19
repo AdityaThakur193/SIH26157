@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { 
   Building2, Layers, AlertTriangle, FileSearch, Search, ChevronRight, 
@@ -14,6 +14,25 @@ import {
   ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, 
   PieChart, Pie, Cell, CartesianGrid
 } from 'recharts';
+import { AnimatedCounter } from '../components/AnimatedCounter';
+
+const GSAPModal = ({ children, onClose }: { children: React.ReactNode, onClose?: () => void }) => {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.fromTo(overlayRef.current, { opacity: 0 }, { opacity: 1, duration: 0.2 });
+    gsap.fromTo(contentRef.current, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(1.5)' });
+  }, []);
+
+  return (
+    <div ref={overlayRef} className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-[9999] p-4">
+      <div ref={contentRef} className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xl max-w-md w-full space-y-5">
+        {children}
+      </div>
+    </div>
+  );
+};
 
 interface OverviewProps {
   onNavigate: (view: 'overview' | 'evidence' | 'assessment' | 'assessments' | 'copilot', cseId?: string) => void;
@@ -69,31 +88,71 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
   // GSAP Choreographed Entry
   useGSAP(() => {
     if (!loading && data) {
-      gsap.fromTo(
+      const tl = gsap.timeline();
+
+      // 1. Header settles
+      tl.fromTo(
+        '.overview-header',
+        { opacity: 0, y: -10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out', clearProps: 'all' }
+      )
+      // 2. KPI row staggers in
+      .fromTo(
         '.overview-card',
-        { opacity: 0, y: 20, scale: 0.98 },
+        { opacity: 0, y: 15, scale: 0.98 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          stagger: 0.07,
-          duration: 0.45,
-          delay: 0.04,
+          stagger: 0.1,
+          duration: 0.4,
           ease: 'power3.out',
-          clearProps: 'transform,opacity,scale'
-        }
-      );
-      gsap.fromTo(
+          clearProps: 'all'
+        },
+        '-=0.1'
+      )
+      // 3. Main chart/table area enters
+      .fromTo(
         '.overview-section',
-        { opacity: 0, y: 24 },
+        { opacity: 0, y: 20 },
         {
           opacity: 1,
           y: 0,
-          stagger: 0.1,
-          duration: 0.55,
-          delay: 0.12,
+          stagger: 0.15,
+          duration: 0.5,
           ease: 'power3.out',
-          clearProps: 'transform,opacity'
+          clearProps: 'all'
+        },
+        '-=0.2'
+      )
+      // 4. Animate chart bars and line
+      .fromTo(
+        '.recharts-bar-rectangle',
+        { scaleY: 0, transformOrigin: 'bottom' },
+        { scaleY: 1, stagger: 0.05, duration: 0.4, ease: 'power3.out' },
+        '-=0.1'
+      )
+      .fromTo(
+        '.recharts-line-curve',
+        { strokeDasharray: '0 1000' },
+        { strokeDasharray: '1000 1000', duration: 1, ease: 'power2.inOut' },
+        '-=0.3'
+      );
+
+      // ScrollTrigger for below-the-fold section
+      gsap.fromTo(
+        '.baseline-deviations',
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.5,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.baseline-deviations',
+            start: 'top 85%',
+            toggleActions: 'play none none none'
+          }
         }
       );
     }
@@ -171,7 +230,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
     <div ref={containerRef} className="space-y-6 max-w-7xl mx-auto pb-10">
       
       {/* Top Banner & Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-4">
+      <div className="overview-header flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Supervisory Assessment Overview</h1>
           <p className="text-sm text-slate-500 mt-1">
@@ -248,7 +307,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             </div>
           </div>
           <div className="text-3xl font-bold text-slate-900 mb-2 font-mono">
-            {entityChartData.length}
+            <AnimatedCounter value={entityChartData.length} />
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
             <div className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" />
@@ -265,7 +324,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             </div>
           </div>
           <div className="text-3xl font-bold text-slate-900 mb-2 font-mono">
-            {loading ? '...' : (data?.alerts_analyzed ?? 0).toLocaleString()}
+            {loading ? '...' : <AnimatedCounter value={data?.alerts_analyzed ?? 0} />}
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
             <div className="w-1.5 h-1.5 rounded-full bg-teal-600" />
@@ -282,7 +341,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             </div>
           </div>
           <div className="text-3xl font-bold text-slate-900 mb-2 font-mono">
-            {loading ? '...' : (data?.supervisory_findings ?? 0).toLocaleString()}
+            {loading ? '...' : <AnimatedCounter value={data?.supervisory_findings ?? 0} />}
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
             <div className="w-1.5 h-1.5 rounded-full bg-orange-600" />
@@ -299,7 +358,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
             </div>
           </div>
           <div className="text-3xl font-bold text-slate-900 mb-2 font-mono">
-            {loading ? '...' : (data?.priority_pool_cases ?? 0).toLocaleString()}
+            {loading ? '...' : <AnimatedCounter value={data?.priority_pool_cases ?? 0} />}
           </div>
           <div className="flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
             <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
@@ -382,6 +441,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                     fill="url(#barGradient)" 
                     radius={[6, 6, 0, 0]} 
                     maxBarSize={44} 
+                    isAnimationActive={false}
                   />
                   <Line 
                     yAxisId="right"
@@ -391,6 +451,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                     strokeWidth={3} 
                     dot={{ r: 5, fill: '#F97316', strokeWidth: 2, stroke: '#FFFFFF' }} 
                     activeDot={{ r: 7, stroke: '#FFEDD5', strokeWidth: 3 }}
+                    isAnimationActive={false}
                   />
                 </ComposedChart>
               </ResponsiveContainer>
@@ -656,7 +717,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
       </div>
 
       {/* Bottom Section: Baseline Deviations */}
-      <div className="overview-section bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
+      <div className="baseline-deviations overview-section bg-white rounded-xl border border-slate-200 p-6 shadow-xs">
         <div className="flex items-start justify-between mb-6">
           <div>
             <h2 className="text-sm font-bold text-slate-900">Baseline Deviations</h2>
@@ -698,8 +759,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
 
       {/* Permanent Purge Confirmation Modal */}
       {showResetModal && createPortal(
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xl max-w-md w-full space-y-5 animate-in zoom-in-95 duration-150">
+        <GSAPModal>
             <div className="flex items-start justify-between">
               <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center">
                 <AlertOctagon className="w-6 h-6" />
@@ -758,8 +818,7 @@ export const Overview: React.FC<OverviewProps> = ({ onNavigate }) => {
                 )}
               </button>
             </div>
-          </div>
-        </div>,
+        </GSAPModal>,
         document.body
       )}
 

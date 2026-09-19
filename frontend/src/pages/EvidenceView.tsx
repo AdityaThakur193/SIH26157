@@ -5,6 +5,67 @@ import {
 import { getEvidenceList, askCopilot } from '../services/api';
 import { EvidenceDetail, EvidenceListResponse, CopilotResponse } from '../types/api';
 import { TextBeautifier } from '../components/common/TextBeautifier';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+
+const ExpandedRowContent = ({ e, handleSendCopilot }: { e: any, handleSendCopilot: (q: string) => void }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  
+  useGSAP(() => {
+    gsap.fromTo(contentRef.current, { height: 0, opacity: 0 }, { height: 'auto', opacity: 1, duration: 0.3, ease: 'power2.out' });
+  }, []);
+
+  return (
+    <div ref={contentRef} className="overflow-hidden bg-slate-50">
+      <div className="p-4 border-b border-slate-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Raw Telemetry Payload</div>
+            <pre className="p-3 bg-slate-900 text-emerald-400 font-mono text-[11px] rounded-xl overflow-y-auto max-h-48 border border-slate-800 leading-relaxed shadow-inner whitespace-pre-wrap break-all" data-lenis-prevent="true">
+              <code>
+                {e.sample_raw ? (
+                  (() => {
+                    try {
+                      return JSON.stringify(JSON.parse(e.sample_raw), null, 2);
+                    } catch (err) {
+                      return e.sample_raw;
+                    }
+                  })()
+                ) : 'No raw payload stored'}
+              </code>
+            </pre>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Cluster Metadata</div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="bg-white p-2 rounded-lg border border-slate-200">
+                  <span className="text-slate-500 block mb-0.5">First Seen</span>
+                  <span className="font-mono text-slate-900">{e.first_seen}</span>
+                </div>
+                <div className="bg-white p-2 rounded-lg border border-slate-200">
+                  <span className="text-slate-500 block mb-0.5">Full Fingerprint</span>
+                  <span className="font-mono text-slate-900 truncate block" title={e.fingerprint}>{e.fingerprint}</span>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 pt-2">
+              <button
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  handleSendCopilot(`Analyze anomaly fingerprint ${e.fingerprint}: ${e.event_type} affecting ${e.dest_ip}. Explain the risk.`);
+                }}
+                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-[11px] flex items-center gap-1.5 shadow-sm transition-colors active:scale-95 cursor-pointer"
+              >
+                <Sparkles className="w-3.5 h-3.5" /> Ask Copilot
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 interface EvidenceViewProps {
   cseId: string;
@@ -219,51 +280,8 @@ export const EvidenceView: React.FC<EvidenceViewProps> = ({ cseId, domainCode, o
                     </tr>
                     {expandedRow === e.fingerprint && (
                       <tr className="bg-slate-50 border-b border-slate-200">
-                        <td colSpan={6} className="p-4">
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Raw Telemetry Payload</div>
-                              <pre className="p-3 bg-slate-900 text-emerald-400 font-mono text-[11px] rounded-xl overflow-y-auto max-h-48 border border-slate-800 leading-relaxed shadow-inner whitespace-pre-wrap break-all" data-lenis-prevent="true">
-                                <code>
-                                  {e.sample_raw ? (
-                                    (() => {
-                                      try {
-                                        return JSON.stringify(JSON.parse(e.sample_raw), null, 2);
-                                      } catch (err) {
-                                        return e.sample_raw;
-                                      }
-                                    })()
-                                  ) : 'No raw payload stored'}
-                                </code>
-                              </pre>
-                            </div>
-                            <div className="space-y-4">
-                              <div>
-                                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Cluster Metadata</div>
-                                <div className="grid grid-cols-2 gap-2 text-xs">
-                                  <div className="bg-white p-2 rounded-lg border border-slate-200">
-                                    <span className="text-slate-500 block mb-0.5">First Seen</span>
-                                    <span className="font-mono text-slate-900">{e.first_seen}</span>
-                                  </div>
-                                  <div className="bg-white p-2 rounded-lg border border-slate-200">
-                                    <span className="text-slate-500 block mb-0.5">Full Fingerprint</span>
-                                    <span className="font-mono text-slate-900 truncate block" title={e.fingerprint}>{e.fingerprint}</span>
-                                  </div>
-                                </div>
-                              </div>
-                              <div className="flex items-center gap-2 pt-2">
-                                <button
-                                  onClick={(ev) => {
-                                    ev.stopPropagation();
-                                    handleSendCopilot(`Analyze anomaly fingerprint ${e.fingerprint}: ${e.event_type} affecting ${e.dest_ip}. Explain the risk.`);
-                                  }}
-                                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold text-[11px] flex items-center gap-1.5 shadow-sm transition-colors active:scale-95 cursor-pointer"
-                                >
-                                  <Sparkles className="w-3.5 h-3.5" /> Ask Copilot
-                                </button>
-                              </div>
-                            </div>
-                          </div>
+                        <td colSpan={6} className="p-0">
+                          <ExpandedRowContent e={e} handleSendCopilot={handleSendCopilot} />
                         </td>
                       </tr>
                     )}

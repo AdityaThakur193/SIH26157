@@ -24,33 +24,24 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
 
   useGSAP(() => {
     if (!loading && data) {
-      gsap.fromTo(
+      const tl = gsap.timeline();
+      
+      tl.fromTo(
+        '.dossier-header',
+        { opacity: 0, y: -10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out', clearProps: 'all' }
+      )
+      .fromTo(
         '.dossier-stat',
         { opacity: 0, y: 16, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          stagger: 0.06,
-          duration: 0.45,
-          delay: 0.04,
-          ease: 'power3.out',
-          clearProps: 'transform,opacity,scale'
-        }
-      );
-      gsap.fromTo(
+        { opacity: 1, y: 0, scale: 1, stagger: 0.06, duration: 0.45, ease: 'power3.out', clearProps: 'all' },
+        '-=0.1'
+      )
+      .fromTo(
         '.dimension-card',
-        { opacity: 0, y: 20, scale: 0.98 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          stagger: 0.08,
-          duration: 0.5,
-          delay: 0.1,
-          ease: 'power3.out',
-          clearProps: 'transform,opacity,scale'
-        }
+        { opacity: 0, scale: 0.95 },
+        { opacity: 1, scale: 1, stagger: 0.08, duration: 0.4, ease: 'power2.out', clearProps: 'all' },
+        '-=0.2'
       );
     }
   }, { scope: containerRef, dependencies: [loading, data] });
@@ -136,7 +127,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
       />
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-5">
+      <div className="dossier-header flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-200 pb-5">
         <div className="flex items-start gap-4">
           <button 
             onClick={() => onNavigate('assessments')}

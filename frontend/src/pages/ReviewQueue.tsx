@@ -40,20 +40,39 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
     fetchData();
   }, []);
 
+  // Initial load animation
+  useGSAP(() => {
+    if (!loading && data) {
+      const tl = gsap.timeline();
+      
+      tl.fromTo(
+        '.queue-header',
+        { opacity: 0, y: -10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out', clearProps: 'all' }
+      )
+      .fromTo(
+        '.queue-tabs',
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out', clearProps: 'all' },
+        '-=0.1'
+      );
+    }
+  }, { scope: containerRef, dependencies: [loading, data] });
+
+  // Tab switch list animation
   useGSAP(() => {
     if (!loading && data) {
       gsap.fromTo(
         '.queue-card',
-        { opacity: 0, y: 24, scale: 0.98 },
+        { opacity: 0, y: 15, scale: 0.98 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          stagger: 0.08,
-          duration: 0.5,
-          delay: 0.04,
+          stagger: 0.05,
+          duration: 0.3,
           ease: 'power3.out',
-          clearProps: 'transform,opacity,scale'
+          clearProps: 'all'
         }
       );
     }
@@ -131,7 +150,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
   return (
     <div ref={containerRef} className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+      <div className="queue-header flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
           <div className="flex items-center space-x-2 text-indigo-600 font-semibold text-xs tracking-wider uppercase">
             <ListChecks className="w-4 h-4" />
@@ -164,7 +183,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
       )}
 
       {/* KPI Status Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="queue-tabs grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
           <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Awaiting Review</div>
           <div className="text-2xl font-black text-indigo-600 font-mono">
@@ -199,7 +218,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white rounded-xl border border-slate-200 p-3 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
+      <div className="queue-tabs bg-white rounded-xl border border-slate-200 p-3 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 w-full md:w-auto">
           <button
             onClick={() => setActiveTab('pending')}
@@ -374,7 +393,10 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
                   {isPending ? (
                     <div className="flex items-center gap-1.5">
                       <button
-                        onClick={() => handleAdjudicate(entity.id, 'APPROVED')}
+                        onClick={(e) => {
+                          gsap.fromTo(e.currentTarget, { scale: 0.9 }, { scale: 1, duration: 0.3, ease: 'back.out(1.5)' });
+                          handleAdjudicate(entity.id, 'APPROVED');
+                        }}
                         disabled={isWorking}
                         className="px-3 py-2 bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition shadow-xs cursor-pointer disabled:opacity-50"
                         title="Certify Statutory Compliance"
@@ -384,7 +406,10 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
                       </button>
 
                       <button
-                        onClick={() => handleAdjudicate(entity.id, 'ESCALATED')}
+                        onClick={(e) => {
+                          gsap.fromTo(e.currentTarget, { scale: 0.9 }, { scale: 1, duration: 0.3, ease: 'back.out(1.5)' });
+                          handleAdjudicate(entity.id, 'ESCALATED');
+                        }}
                         disabled={isWorking}
                         className="px-3 py-2 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition shadow-xs cursor-pointer disabled:opacity-50"
                         title="Escalate for Formal Section 70B Inquiry"
@@ -394,7 +419,10 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
                       </button>
 
                       <button
-                        onClick={() => handleAdjudicate(entity.id, 'REMEDIATION_REQUIRED')}
+                        onClick={(e) => {
+                          gsap.fromTo(e.currentTarget, { scale: 0.9 }, { scale: 1, duration: 0.3, ease: 'back.out(1.5)' });
+                          handleAdjudicate(entity.id, 'REMEDIATION_REQUIRED');
+                        }}
                         disabled={isWorking}
                         className="px-3 py-2 bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 transition shadow-xs cursor-pointer disabled:opacity-50"
                         title="Mandate Corrective Action Plan (CAP)"
