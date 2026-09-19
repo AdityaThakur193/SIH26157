@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   ArrowLeft, Upload, CheckCircle2, AlertOctagon, Sparkles, FileText, ChevronRight
 } from 'lucide-react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { getAssessment, ingestCompliance } from '../services/api';
 import { CSEDetailResponse, DimensionMetric } from '../types/api';
 
@@ -11,6 +13,7 @@ interface AssessmentDossierProps {
 }
 
 export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onNavigate }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<CSEDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,6 +21,31 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
   const [isUploadingPolicy, setIsUploadingPolicy] = useState(false);
   const [policyMessage, setPolicyMessage] = useState<string | null>(null);
   const ismsFileInputRef = useRef<HTMLInputElement>(null);
+
+  useGSAP(() => {
+    if (!loading && data) {
+      const ctx = gsap.context(() => {
+        gsap.from('.dossier-stat', {
+          opacity: 0,
+          y: 16,
+          stagger: 0.06,
+          duration: 0.45,
+          ease: 'power2.out',
+          clearProps: 'all'
+        });
+        gsap.from('.dimension-card', {
+          opacity: 0,
+          y: 20,
+          stagger: 0.08,
+          duration: 0.5,
+          delay: 0.1,
+          ease: 'power3.out',
+          clearProps: 'all'
+        });
+      }, containerRef);
+      return () => ctx.revert();
+    }
+  }, [loading, data]);
 
   const fetchDossier = async () => {
     setLoading(true);
@@ -88,7 +116,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
   }
 
   return (
-    <div className="max-w-7xl mx-auto pb-10 space-y-8 animate-in fade-in duration-300">
+    <div ref={containerRef} className="max-w-7xl mx-auto pb-10 space-y-8 animate-in fade-in duration-300">
       
       {/* Hidden file input for ISMS Policy */}
       <input 
@@ -104,7 +132,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
         <div className="flex items-start gap-4">
           <button 
             onClick={() => onNavigate('overview')}
-            className="mt-1 p-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg transition-colors"
+            className="mt-1 p-2 bg-white border border-slate-200 hover:bg-slate-50 active:scale-95 text-slate-600 rounded-xl transition-all cursor-pointer shadow-2xs"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
@@ -127,7 +155,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
           <button 
             onClick={handleUploadClick}
             disabled={isUploadingPolicy}
-            className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-sm transition-all"
+            className="px-4 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 active:scale-95 text-slate-700 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-xs hover:shadow-sm transition-all cursor-pointer"
           >
             {isUploadingPolicy ? (
               <div className="w-4 h-4 border-2 border-slate-400 border-t-slate-700 rounded-full animate-spin" />
@@ -139,7 +167,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
 
           <button 
             onClick={() => onNavigate('copilot')}
-            className="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-100 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm transition-all"
+            className="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 active:scale-95 text-purple-700 border border-purple-100 rounded-xl text-sm font-bold flex items-center gap-2 shadow-xs hover:shadow-sm transition-all cursor-pointer"
           >
             <Sparkles className="w-4 h-4" />
             <span>Forensic Copilot & Evidence</span>
@@ -184,42 +212,42 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
         {/* 6 Stat Boxes */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           
-          <div className="border border-slate-100 rounded-xl p-4 bg-white shadow-sm">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Raw Telemetry</div>
-            <div className="inline-block bg-indigo-600 text-white px-2 py-0.5 rounded text-xl font-bold font-mono shadow-sm">
+            <div className="inline-block bg-indigo-600 text-white px-2 py-0.5 rounded text-xl font-bold font-mono shadow-xs">
               {data.alerts_ingested.toLocaleString()}
             </div>
           </div>
 
-          <div className="border border-slate-100 rounded-xl p-4 bg-white shadow-sm">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">SimHash Clusters</div>
             <div className="text-xl font-bold text-slate-900 font-mono">
               {data.cases_correlated.toLocaleString()}
             </div>
           </div>
 
-          <div className="border border-slate-100 rounded-xl p-4 bg-white shadow-sm">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Formal Investigations</div>
             <div className="text-xl font-bold text-rose-600 font-mono">
               {data.formal_investigations.toLocaleString()}
             </div>
           </div>
 
-          <div className="border border-slate-100 rounded-xl p-4 bg-white shadow-sm">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Escalations Logged</div>
             <div className="text-xl font-bold text-slate-900 font-mono">
               {data.escalations_logged.toLocaleString()}
             </div>
           </div>
 
-          <div className="border border-slate-100 rounded-xl p-4 bg-white shadow-sm">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Peer Variance</div>
             <div className="text-xl font-bold text-orange-500 font-mono">
               {data.peer_variance_index}
             </div>
           </div>
 
-          <div className="border border-slate-100 rounded-xl p-4 bg-white shadow-sm">
+          <div className="dossier-stat border border-slate-100 rounded-xl p-4 bg-white shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
             <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Priority Review</div>
             <div className="text-xl font-bold text-slate-900 font-mono">
               {data.manual_review_queue_count.toLocaleString()}
@@ -251,7 +279,7 @@ export const AssessmentDossier: React.FC<AssessmentDossierProps> = ({ cseId, onN
           if (dim.status_color === "gray") badgeClass = "bg-slate-100 text-slate-500 border border-slate-200";
 
           return (
-            <div key={i} className="bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col hover:shadow-md transition-shadow">
+            <div key={i} className="dimension-card bg-white rounded-2xl border border-slate-200 shadow-xs flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
               <div className="p-5 flex-1 flex flex-col">
                 <div className="flex items-center justify-between mb-4">
                   <span className="px-2.5 py-1 rounded-md bg-slate-100 text-slate-500 text-[10px] font-bold font-mono tracking-wider">

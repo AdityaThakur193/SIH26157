@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import Lenis from 'lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
   Shield, 
   LayoutDashboard, 
@@ -13,6 +16,8 @@ import {
   Lock, 
   WifiOff 
 } from 'lucide-react';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface AppLayoutProps {
   activeView: string;
@@ -31,6 +36,27 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onLogout,
   children
 }) => {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.1,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    const updateTicker = (time: number) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(updateTicker);
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      gsap.ticker.remove(updateTicker);
+      lenis.destroy();
+    };
+  }, []);
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard, section: 'core' },
     { id: 'assessments', label: 'Assessments', icon: FileCheck2, section: 'core' },

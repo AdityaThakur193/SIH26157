@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FileSearch, ChevronRight, AlertTriangle, RefreshCw } from 'lucide-react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { getOverview } from '../services/api';
 import { NationalOverviewResponse, CSESummary } from '../types/api';
 
@@ -8,9 +10,26 @@ interface FindingsProps {
 }
 
 export const Findings: React.FC<FindingsProps> = ({ onNavigate }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [data, setData] = useState<NationalOverviewResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useGSAP(() => {
+    if (!loading && data) {
+      const ctx = gsap.context(() => {
+        gsap.from('.finding-card', {
+          opacity: 0,
+          y: 20,
+          stagger: 0.08,
+          duration: 0.5,
+          ease: 'power2.out',
+          clearProps: 'all'
+        });
+      }, containerRef);
+      return () => ctx.revert();
+    }
+  }, [loading, data]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -56,7 +75,7 @@ export const Findings: React.FC<FindingsProps> = ({ onNavigate }) => {
   const entities = data?.entities || [];
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div ref={containerRef} className="max-w-7xl mx-auto space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
           <div className="flex items-center space-x-2 text-indigo-600 font-semibold text-xs tracking-wider uppercase">
@@ -66,8 +85,8 @@ export const Findings: React.FC<FindingsProps> = ({ onNavigate }) => {
           <h1 className="text-2xl font-bold text-slate-900 mt-1">Assessment Dossiers</h1>
           <p className="text-sm text-slate-500 mt-0.5">Select a Critical Sector Entity to review its full supervisory evaluation.</p>
         </div>
-        <button onClick={fetchData} className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors" title="Refresh">
-          <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+        <button onClick={fetchData} className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all active:scale-95 cursor-pointer" title="Refresh">
+          <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin text-indigo-600' : ''}`} />
         </button>
       </div>
 
@@ -76,7 +95,7 @@ export const Findings: React.FC<FindingsProps> = ({ onNavigate }) => {
           <FileSearch className="w-12 h-12 text-slate-300 mb-4" />
           <h2 className="text-lg font-bold text-slate-900 mb-2">No entities ingested</h2>
           <p className="text-sm text-slate-500 max-w-sm">Ingest SOC telemetry data via the Data Ingestion page to generate assessment findings.</p>
-          <button onClick={() => onNavigate('evidence')} className="mt-6 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 font-semibold rounded-lg text-sm transition-colors">Go to Data Ingestion</button>
+          <button onClick={() => onNavigate('evidence')} className="mt-6 px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 font-semibold rounded-xl text-sm transition-all shadow-sm">Go to Data Ingestion</button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -84,7 +103,7 @@ export const Findings: React.FC<FindingsProps> = ({ onNavigate }) => {
             <div
               key={entity.id}
               onClick={() => onNavigate('assessment', entity.id)}
-              className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm hover:shadow-md hover:border-indigo-200 cursor-pointer transition-all group"
+              className="finding-card bg-white rounded-2xl border border-slate-200 p-5 shadow-xs hover:shadow-md hover:border-indigo-200 hover:-translate-y-0.5 cursor-pointer transition-all duration-200 group"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-700">
