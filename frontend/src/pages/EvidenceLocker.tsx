@@ -41,6 +41,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
   const [batchComplete, setBatchComplete] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
 
   const stages = [
     { label: 'Computing SHA-256 Cryptographic Digest', icon: Hash },
@@ -215,6 +216,17 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                 className="hidden"
                 disabled={isProcessing}
               />
+              <input
+                ref={folderInputRef}
+                type="file"
+                // @ts-ignore - webkitdirectory is non-standard but widely supported
+                webkitdirectory=""
+                directory=""
+                multiple
+                onChange={handleFileChange}
+                className="hidden"
+                disabled={isProcessing}
+              />
               
               <div className="w-12 h-12 rounded-2xl bg-primary-container text-primary flex items-center justify-center mx-auto mb-3">
                 <UploadCloud className="w-6 h-6" />
@@ -227,12 +239,22 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                 <p className="text-xs text-gray-500 mt-1">
                   Supports multiple files (Wazuh, Splunk, Elastic, Sentinel or raw audit logs)
                 </p>
-                <button
-                  type="button"
-                  className="mt-4 px-4 py-2 bg-white border border-outline hover:border-gray-300 text-xs font-semibold text-gray-700 rounded-xl shadow-xs transition-colors"
-                >
-                  Browse Files
-                </button>
+                <div className="flex items-center justify-center gap-3 mt-4">
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); !isProcessing && fileInputRef.current?.click(); }}
+                    className="px-4 py-2 bg-white border border-outline hover:border-gray-300 text-xs font-semibold text-gray-700 rounded-xl shadow-xs transition-colors"
+                  >
+                    Browse Files
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); !isProcessing && folderInputRef.current?.click(); }}
+                    className="px-4 py-2 bg-white border border-outline hover:border-gray-300 text-xs font-semibold text-gray-700 rounded-xl shadow-xs transition-colors"
+                  >
+                    Browse Folders
+                  </button>
+                </div>
               </div>
             </div>
             
