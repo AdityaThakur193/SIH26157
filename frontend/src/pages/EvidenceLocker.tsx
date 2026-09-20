@@ -264,7 +264,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                   <span>{selectedFiles.length} file{selectedFiles.length !== 1 && 's'} queued</span>
                   <span>{(totalSize / (1024 * 1024)).toFixed(2)} MB total</span>
                 </div>
-                <div className="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar flex flex-col">
+                <div className="max-h-48 overflow-y-auto gap-2 pr-1 custom-scrollbar flex flex-col">
                   {selectedFiles.map((f, i) => (
                     <div key={`${f.name}-${i}`} className="flex items-center justify-between bg-gray-50 border border-outline p-2.5 rounded-lg shrink-0">
                       <div className="flex items-center gap-3 overflow-hidden">
@@ -354,9 +354,9 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
 
             {/* Live Terminal Log / History */}
             {uploadResults.length > 0 && (
-              <div className="space-y-2 mb-4 max-h-32 overflow-y-auto custom-scrollbar font-mono text-[10px] border-b border-gray-800 pb-4">
+              <div className="gap-2 flex flex-col mb-4 max-h-64 overflow-y-auto custom-scrollbar font-mono text-[10px] border-b border-gray-800 pb-4">
                 {uploadResults.map((r, idx) => (
-                  <div key={idx} className={`flex items-start gap-2 ${r.error ? 'text-red-400' : 'text-teal-400'}`}>
+                  <div key={idx} className={`flex items-start gap-2 shrink-0 ${r.error ? 'text-red-400' : 'text-teal-400'}`}>
                     <span className="shrink-0">{r.error ? '✖' : '✔'}</span>
                     <span className="break-all">
                       {r.file.name} — {r.error ? `FAILED: ${r.error}` : `${r.result?.total_raw_logs.toLocaleString()} logs, ${r.result?.deduplicated_clusters.toLocaleString()} clusters [COMMITTED]`}
