@@ -166,7 +166,7 @@ export const Assessments: React.FC<AssessmentsProps> = ({ onNavigate }) => {
               <RechartsTooltip 
                 cursor={{ fill: '#f8fafc' }}
                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                formatter={(value: number) => [value.toLocaleString(), 'Raw Alerts']}
+                formatter={(value: any) => [value.toLocaleString(), 'Raw Alerts']}
               />
               <Bar dataKey="alerts_count" radius={[4, 4, 0, 0]}>
                 {entities.map((entry, index) => (

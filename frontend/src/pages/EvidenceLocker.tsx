@@ -10,7 +10,9 @@ import {
   Hash,
   Layers,
   FileCheck,
-  CheckCircle2
+  CheckCircle2,
+  X,
+  File as FileIcon
 } from 'lucide-react';
 import { ingestEvidence } from '../services/api';
 import { IngestResponse } from '../types/api';
@@ -19,14 +21,24 @@ interface EvidenceLockerProps {
   onNavigate: (view: 'overview' | 'evidence' | 'assessment' | 'copilot', cseId?: string) => void;
 }
 
+interface UploadResult {
+  file: File;
+  result?: IngestResponse;
+  error?: string;
+}
+
 export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) => {
   const [entityName, setEntityName] = useState('Selected Entity');
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [isDragging, setIsDragging] = useState(false);
+  
   const [isProcessing, setIsProcessing] = useState(false);
+  const [currentFileIndex, setCurrentFileIndex] = useState<number>(-1);
   const [currentStage, setCurrentStage] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<IngestResponse | null>(null);
+  
+  const [globalError, setGlobalError] = useState<string | null>(null);
+  const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
+  const [batchComplete, setBatchComplete] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -37,56 +49,99 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
     { label: 'NCIIPC Tamper-Proof Audit Ledger Commit', icon: Database },
   ];
 
+  const appendFiles = (filesList: FileList | File[]) => {
+    const newFiles = Array.from(filesList);
+    setSelectedFiles(prev => {
+      // Deduplicate by name and size
+      const existingSignatures = new Set(prev.map(f => `${f.name}-${f.size}`));
+      const uniqueNewFiles = newFiles.filter(f => !existingSignatures.has(`${f.name}-${f.size}`));
+      return [...prev, ...uniqueNewFiles];
+    });
+    setGlobalError(null);
+    setBatchComplete(false);
+    setUploadResults([]);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
-      setError(null);
-      setResult(null);
+    if (e.target.files && e.target.files.length > 0) {
+      appendFiles(e.target.files);
     }
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      setSelectedFile(e.dataTransfer.files[0]);
-      setError(null);
-      setResult(null);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      appendFiles(e.dataTransfer.files);
     }
   };
 
+  const removeFile = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const clearAllFiles = () => {
+    setSelectedFiles([]);
+    setGlobalError(null);
+    setBatchComplete(false);
+    setUploadResults([]);
+  };
+
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setError('Please select or drop a SOC log file to ingest.');
+    if (selectedFiles.length === 0) {
+      setGlobalError('Please select or drop at least one SOC log file to ingest.');
       return;
     }
 
     setIsProcessing(true);
-    setError(null);
-    setResult(null);
-    setCurrentStage(0);
+    setGlobalError(null);
+    setBatchComplete(false);
+    
+    const results: UploadResult[] = [];
+    setUploadResults(results);
 
-    // Progress animation while real API request runs
-    const stageInterval = setInterval(() => {
-      setCurrentStage((prev) => {
-        if (prev < stages.length - 1) return prev + 1;
-        return prev;
-      });
-    }, 700);
+    for (let i = 0; i < selectedFiles.length; i++) {
+      const file = selectedFiles[i];
+      setCurrentFileIndex(i);
+      setCurrentStage(0);
 
-    try {
-      const response = await ingestEvidence(entityName, selectedFile);
-      clearInterval(stageInterval);
-      setCurrentStage(stages.length);
-      setResult(response);
-    } catch (err: unknown) {
-      clearInterval(stageInterval);
-      const errMsg = err instanceof Error ? err.message : 'Upload failed';
-      setError(`Ingestion failed: ${errMsg}`);
-    } finally {
-      setIsProcessing(false);
+      // Progress animation while real API request runs
+      const stageInterval = setInterval(() => {
+        setCurrentStage((prev) => {
+          if (prev < stages.length - 1) return prev + 1;
+          return prev;
+        });
+      }, 700);
+
+      try {
+        const response = await ingestEvidence(entityName, file);
+        clearInterval(stageInterval);
+        setCurrentStage(stages.length);
+        
+        const newResult = { file, result: response };
+        results.push(newResult);
+        setUploadResults([...results]);
+      } catch (err: unknown) {
+        clearInterval(stageInterval);
+        const errMsg = err instanceof Error ? err.message : 'Upload failed';
+        const newResult = { file, error: errMsg };
+        results.push(newResult);
+        setUploadResults([...results]);
+      }
     }
+
+    setIsProcessing(false);
+    setCurrentFileIndex(-1);
+    setBatchComplete(true);
   };
+
+  const totalSize = selectedFiles.reduce((acc, f) => acc + f.size, 0);
+  const successfulResults = uploadResults.filter(r => r.result);
+  const failedResults = uploadResults.filter(r => r.error);
+  
+  const aggregateRaw = successfulResults.reduce((acc, r) => acc + (r.result?.total_raw_logs || 0), 0);
+  const aggregateClusters = successfulResults.reduce((acc, r) => acc + (r.result?.deduplicated_clusters || 0), 0);
+  const latestCaseId = successfulResults.length > 0 ? successfulResults[0].result?.case_id : null;
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -98,7 +153,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
         </div>
         <h1 className="text-2xl font-bold text-gray-900 mt-1">Air-Gapped Evidence Locker</h1>
         <p className="text-sm text-gray-500 mt-0.5">
-          Submit raw SOC telemetry for automated cryptographic verification, SimHash de-duplication, and regulatory audit trail.
+          Submit raw SOC telemetry batches for automated cryptographic verification, SimHash de-duplication, and regulatory audit trail.
         </p>
       </div>
 
@@ -126,15 +181,26 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
 
           {/* Drag & Drop Zone */}
           <div>
-            <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
-              SOC Telemetry Raw Export (JSON / CSV / LOG)
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                SOC Telemetry Raw Export (JSON / CSV / LOG)
+              </label>
+              {selectedFiles.length > 0 && !isProcessing && (
+                <button 
+                  onClick={clearAllFiles}
+                  className="text-xs font-medium text-red-600 hover:text-red-700 transition-colors"
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
+
             <div
               onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
               onClick={() => !isProcessing && fileInputRef.current?.click()}
-              className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all ${
+              className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer transition-all ${
                 isDragging 
                   ? 'border-primary bg-primary-container/40' 
                   : 'border-gray-200 hover:border-primary/50 bg-[#FAFBFD]'
@@ -144,6 +210,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                 ref={fileInputRef}
                 type="file"
                 accept=".csv,.json,.log,.txt"
+                multiple
                 onChange={handleFileChange}
                 className="hidden"
                 disabled={isProcessing}
@@ -153,48 +220,66 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                 <UploadCloud className="w-6 h-6" />
               </div>
 
-              {selectedFile ? (
-                <div>
-                  <p className="text-sm font-bold text-gray-800">{selectedFile.name}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {(selectedFile.size / 1024).toFixed(1)} KB  Ready to ingest
-                  </p>
-                  <span className="inline-block mt-3 px-3 py-1 bg-teal-50 text-accent-teal text-xs font-semibold rounded-lg border border-teal-200">
-                    Click to swap file
-                  </span>
-                </div>
-              ) : (
-                <div>
-                  <p className="text-sm font-semibold text-gray-800">
-                    Drag and drop SOC log export here
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Supports Wazuh, Splunk, Elastic, Sentinel or raw audit logs
-                  </p>
-                  <button
-                    type="button"
-                    className="mt-4 px-4 py-2 bg-white border border-outline hover:border-gray-300 text-xs font-semibold text-gray-700 rounded-xl shadow-xs transition-colors"
-                  >
-                    Browse Files
-                  </button>
-                </div>
-              )}
+              <div>
+                <p className="text-sm font-semibold text-gray-800">
+                  Drag and drop SOC log exports here
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Supports multiple files (Wazuh, Splunk, Elastic, Sentinel or raw audit logs)
+                </p>
+                <button
+                  type="button"
+                  className="mt-4 px-4 py-2 bg-white border border-outline hover:border-gray-300 text-xs font-semibold text-gray-700 rounded-xl shadow-xs transition-colors"
+                >
+                  Browse Files
+                </button>
+              </div>
             </div>
+            
+            {selectedFiles.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between text-xs font-medium text-gray-500 px-1">
+                  <span>{selectedFiles.length} file{selectedFiles.length !== 1 && 's'} queued</span>
+                  <span>{(totalSize / (1024 * 1024)).toFixed(2)} MB total</span>
+                </div>
+                <div className="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                  {selectedFiles.map((f, i) => (
+                    <div key={`${f.name}-${i}`} className="flex items-center justify-between bg-gray-50 border border-outline p-2.5 rounded-lg">
+                      <div className="flex items-center gap-3 overflow-hidden">
+                        <FileIcon className="w-4 h-4 text-gray-400 shrink-0" />
+                        <div className="truncate">
+                          <p className="text-xs font-semibold text-gray-800 truncate">{f.name}</p>
+                          <p className="text-[10px] text-gray-500">{(f.size / 1024).toFixed(1)} KB</p>
+                        </div>
+                      </div>
+                      {!isProcessing && (
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); removeFile(i); }}
+                          className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {error && (
+          {globalError && (
             <div className="p-3 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3 text-red-700 text-xs font-medium">
               <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-              <span>{error}</span>
+              <span>{globalError}</span>
             </div>
           )}
 
           <div className="pt-2">
             <button
               onClick={handleUpload}
-              disabled={isProcessing || !selectedFile}
+              disabled={isProcessing || selectedFiles.length === 0}
               className={`w-full py-3 px-4 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all ${
-                isProcessing || !selectedFile
+                isProcessing || selectedFiles.length === 0
                   ? 'bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200'
                   : 'bg-primary text-white hover:bg-[#4d3e91] active:scale-[0.99]'
               }`}
@@ -202,12 +287,12 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
               {isProcessing ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  <span>Ingesting Telemetry & Committing Ledger...</span>
+                  <span>Ingesting Batch & Committing Ledger...</span>
                 </>
               ) : (
                 <>
                   <Terminal className="w-4 h-4" />
-                  <span>Execute Enclave Verification & Ingest</span>
+                  <span>Execute Batch Ingestion</span>
                 </>
               )}
             </button>
@@ -229,11 +314,43 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
               </span>
             </div>
 
-            {/* Stepper Display */}
+            {/* Batch Progress Header */}
+            {isProcessing && currentFileIndex >= 0 && (
+              <div className="mb-4">
+                <div className="flex justify-between text-[11px] font-mono text-gray-300 mb-1">
+                  <span className="truncate pr-2">Processing File {currentFileIndex + 1} of {selectedFiles.length}: {selectedFiles[currentFileIndex].name}</span>
+                  <span className="shrink-0">{Math.round(((currentFileIndex) / selectedFiles.length) * 100)}%</span>
+                </div>
+                <div className="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-purple-500 h-full transition-all duration-300"
+                    style={{ width: `${((currentFileIndex) / selectedFiles.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Live Terminal Log / History */}
+            {uploadResults.length > 0 && (
+              <div className="space-y-2 mb-4 max-h-32 overflow-y-auto custom-scrollbar font-mono text-[10px] border-b border-gray-800 pb-4">
+                {uploadResults.map((r, idx) => (
+                  <div key={idx} className={`flex items-start gap-2 ${r.error ? 'text-red-400' : 'text-teal-400'}`}>
+                    <span className="shrink-0">{r.error ? '✖' : '✔'}</span>
+                    <span className="break-all">
+                      {r.file.name} — {r.error ? `FAILED: ${r.error}` : `${r.result?.total_raw_logs.toLocaleString()} logs, ${r.result?.deduplicated_clusters.toLocaleString()} clusters [COMMITTED]`}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Stepper Display for Active File */}
             <div className="space-y-4 my-auto py-2">
               {stages.map((stage, idx) => {
                 const Icon = stage.icon;
-                const isComplete = result || (isProcessing && currentStage > idx);
+                const isComplete = !isProcessing && batchComplete 
+                  ? true 
+                  : (isProcessing && currentStage > idx);
                 const isCurrent = isProcessing && currentStage === idx;
                 
                 return (
@@ -271,7 +388,7 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
               })}
             </div>
 
-            <div className="pt-4 border-t border-gray-800/80 text-[11px] font-mono text-gray-400 flex items-center justify-between">
+            <div className="pt-4 border-t border-gray-800/80 text-[11px] font-mono text-gray-400 flex items-center justify-between mt-4">
               <span>NODE: NCIIPC-AG-04</span>
               <span>ISOLATION: STRICT</span>
             </div>
@@ -279,66 +396,77 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
         </div>
       </div>
 
-      {/* Result Card: Displaying Actual Cryptographic & Ingestion Data */}
-      {result && (
+      {/* Aggregate Result Card */}
+      {batchComplete && (
         <div className="bg-white rounded-2xl border border-teal-200 p-6 shadow-sm bg-linear-to-r from-teal-50/40 via-white to-purple-50/20 space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-teal-100 text-accent-teal flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6" />
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${failedResults.length > 0 ? 'bg-amber-100 text-amber-600' : 'bg-teal-100 text-accent-teal'}`}>
+                {failedResults.length > 0 ? <AlertCircle className="w-6 h-6" /> : <CheckCircle2 className="w-6 h-6" />}
               </div>
               <div>
                 <h3 className="text-base font-bold text-gray-900">
-                  Ingestion Cryptographically Committed
+                  Batch Ingestion Completed
                 </h3>
                 <p className="text-xs text-gray-500">
-                  Case ID: <span className="font-mono font-bold text-gray-800">{result.case_id}</span>  Entity: <span className="font-semibold text-gray-800">{result.entity_name}</span>
+                  Entity: <span className="font-semibold text-gray-800">{entityName}</span> {latestCaseId && ` | Case ID: `}<span className="font-mono font-bold text-gray-800">{latestCaseId}</span>
                 </p>
               </div>
             </div>
 
-            <span className="self-start sm:self-auto px-3 py-1 bg-teal-100 text-teal-800 font-mono text-xs font-bold rounded-lg border border-teal-200">
-              {result.status}
+            <span className={`self-start sm:self-auto px-3 py-1 font-mono text-xs font-bold rounded-lg border ${failedResults.length > 0 ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-teal-100 text-teal-800 border-teal-200'}`}>
+              {successfulResults.length} SUCCEEDED, {failedResults.length} FAILED
             </span>
           </div>
+
+          {failedResults.length > 0 && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-xl space-y-1">
+              <p className="text-xs font-bold text-red-800">Errors encountered:</p>
+              <ul className="text-xs text-red-700 list-disc list-inside">
+                {failedResults.map((r, i) => (
+                  <li key={i} className="truncate">{r.file.name}: {r.error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             <div className="p-4 rounded-xl bg-gray-50 border border-outline flex flex-col justify-between">
               <div>
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                  Raw Telemetry Logs
+                  Aggregate Raw Logs
                 </span>
                 <div className="text-4xl font-bold font-mono text-gray-900 mt-1 tabular-nums tracking-tighter">
-                  {result.total_raw_logs.toLocaleString()}
+                  {aggregateRaw.toLocaleString()}
                 </div>
               </div>
               <p className="text-xs text-gray-500 mt-2 leading-snug">
-                Total unfiltered event logs ingested directly from the entity's SOC before processing.
+                Total unfiltered event logs ingested directly from the entity's SOC across {successfulResults.length} file(s).
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-gray-50 border border-outline flex flex-col justify-between">
               <div>
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                  SimHash Clusters
+                  Aggregate SimHash Clusters
                 </span>
                 <div className="text-4xl font-bold font-mono text-primary mt-1 tabular-nums tracking-tighter">
-                  {result.deduplicated_clusters.toLocaleString()}
+                  {aggregateClusters.toLocaleString()}
                 </div>
               </div>
               <p className="text-xs text-primary/80 mt-2 leading-snug font-medium">
-                Unique incident patterns identified after removing {((result.total_raw_logs - result.deduplicated_clusters)).toLocaleString()} duplicate/repeated alerts from the raw telemetry.
+                Unique incident patterns identified after removing {(aggregateRaw - aggregateClusters).toLocaleString()} duplicate/repeated alerts.
               </p>
             </div>
 
             <div className="p-4 rounded-xl bg-gray-50 border border-outline flex flex-col justify-between">
               <div>
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
-                  Reduction Compression
+                  Total Reduction Compression
                 </span>
                 <div className="text-4xl font-bold font-mono text-accent-teal mt-1 tabular-nums tracking-tighter">
-                  {result.total_raw_logs > 0 
-                    ? `${(((result.total_raw_logs - result.deduplicated_clusters) / result.total_raw_logs) * 100).toFixed(1)}%`
+                  {aggregateRaw > 0 
+                    ? `${(((aggregateRaw - aggregateClusters) / aggregateRaw) * 100).toFixed(1)}%`
                     : '0%'}
                 </div>
               </div>
@@ -348,18 +476,22 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
             </div>
           </div>
 
-          {/* Cryptographic SHA-256 Hash Box */}
-          <div className="p-3.5 bg-gray-900 rounded-xl text-gray-200 font-mono text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-            <div className="flex items-center gap-2 overflow-hidden">
-              <Hash className="w-4 h-4 text-teal-400 shrink-0" />
-              <span className="text-gray-400 text-[11px] shrink-0">SHA-256:</span>
-              <span className="text-teal-300 select-all truncate text-[11px]">
-                {result.sha256_hash}
+          {/* Cryptographic SHA-256 Hash Box (Multiple Hashes) */}
+          <div className="p-3.5 bg-gray-900 rounded-xl text-gray-200 font-mono text-xs flex flex-col gap-2 max-h-32 overflow-y-auto custom-scrollbar">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] text-gray-400 bg-gray-800 px-2 py-0.5 rounded border border-gray-700">
+                TAMPER-PROOF LEDGER SEALS ({successfulResults.length})
               </span>
             </div>
-            <span className="text-[10px] text-gray-400 bg-gray-800 px-2 py-0.5 rounded border border-gray-700 shrink-0 self-end sm:self-auto">
-              TAMPER-PROOF LEDGER SEAL
-            </span>
+            {successfulResults.map((r, i) => (
+              <div key={i} className="flex items-center gap-2 overflow-hidden border-b border-gray-800 pb-2 last:border-0 last:pb-0">
+                <Hash className="w-3.5 h-3.5 text-teal-400 shrink-0" />
+                <span className="text-gray-400 text-[10px] shrink-0 truncate w-32">{r.file.name}</span>
+                <span className="text-teal-300 select-all truncate text-[11px]">
+                  {r.result?.sha256_hash}
+                </span>
+              </div>
+            ))}
           </div>
 
           <div className="flex items-center justify-end gap-3 pt-2">
@@ -370,8 +502,13 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
               National Overview
             </button>
             <button
-              onClick={() => onNavigate('assessment', result.case_id)}
-              className="px-5 py-2 bg-primary hover:bg-[#4d3e91] text-white rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all"
+              onClick={() => latestCaseId && onNavigate('assessment', latestCaseId)}
+              disabled={!latestCaseId}
+              className={`px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-sm transition-all ${
+                latestCaseId 
+                  ? 'bg-primary hover:bg-[#4d3e91] text-white' 
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
             >
               <span>Inspect CSE Dossier</span>
               <ArrowRight className="w-4 h-4" />

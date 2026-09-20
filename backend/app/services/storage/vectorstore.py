@@ -86,7 +86,7 @@ class VectorStoreEngine:
         if documents:
             BATCH_SIZE = 5000
             for i in range(0, len(documents), BATCH_SIZE):
-                self.collection.add(
+                self.collection.upsert(
                     documents=documents[i:i+BATCH_SIZE], 
                     metadatas=metadatas[i:i+BATCH_SIZE], 
                     ids=ids[i:i+BATCH_SIZE]

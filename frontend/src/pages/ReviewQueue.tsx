@@ -79,7 +79,7 @@ export const ReviewQueue: React.FC<ReviewQueueProps> = ({ onNavigate }) => {
     }
   }, { scope: containerRef, dependencies: [loading, data, activeTab, searchQuery] });
 
-  const handleAdjudicate = async (cseId: string, verdict: string, remarks?: string) => {
+  const handleAdjudicate = async (cseId: string, verdict: 'APPROVED' | 'ESCALATED' | 'REMEDIATION_REQUIRED' | 'Pending', remarks?: string) => {
     setAdjudicatingId(cseId);
     try {
       await adjudicateEntity(cseId, verdict, remarks);
