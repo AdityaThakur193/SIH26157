@@ -242,9 +242,9 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
                   <span>{selectedFiles.length} file{selectedFiles.length !== 1 && 's'} queued</span>
                   <span>{(totalSize / (1024 * 1024)).toFixed(2)} MB total</span>
                 </div>
-                <div className="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar">
+                <div className="max-h-48 overflow-y-auto space-y-2 pr-1 custom-scrollbar flex flex-col">
                   {selectedFiles.map((f, i) => (
-                    <div key={`${f.name}-${i}`} className="flex items-center justify-between bg-gray-50 border border-outline p-2.5 rounded-lg">
+                    <div key={`${f.name}-${i}`} className="flex items-center justify-between bg-gray-50 border border-outline p-2.5 rounded-lg shrink-0">
                       <div className="flex items-center gap-3 overflow-hidden">
                         <FileIcon className="w-4 h-4 text-gray-400 shrink-0" />
                         <div className="truncate">
@@ -477,14 +477,14 @@ export const EvidenceLocker: React.FC<EvidenceLockerProps> = ({ onNavigate }) =>
           </div>
 
           {/* Cryptographic SHA-256 Hash Box (Multiple Hashes) */}
-          <div className="p-3.5 bg-gray-900 rounded-xl text-gray-200 font-mono text-xs flex flex-col gap-2 max-h-32 overflow-y-auto custom-scrollbar">
+          <div className="p-3.5 bg-gray-900 rounded-xl text-gray-200 font-mono text-xs flex flex-col gap-2 max-h-56 overflow-y-auto custom-scrollbar">
             <div className="flex items-center justify-between mb-1">
               <span className="text-[10px] text-gray-400 bg-gray-800 px-2 py-0.5 rounded border border-gray-700">
                 TAMPER-PROOF LEDGER SEALS ({successfulResults.length})
               </span>
             </div>
             {successfulResults.map((r, i) => (
-              <div key={i} className="flex items-center gap-2 overflow-hidden border-b border-gray-800 pb-2 last:border-0 last:pb-0">
+              <div key={i} className="flex items-center gap-2 overflow-hidden border-b border-gray-800 pb-2 last:border-0 last:pb-0 shrink-0">
                 <Hash className="w-3.5 h-3.5 text-teal-400 shrink-0" />
                 <span className="text-gray-400 text-[10px] shrink-0 truncate w-32">{r.file.name}</span>
                 <span className="text-teal-300 select-all truncate text-[11px]">
