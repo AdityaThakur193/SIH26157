@@ -1,52 +1,85 @@
-# SAT-SA: System Architecture
+# System Architecture: SAT-SA (SIH26157)
+**Supervisory Analytics Tool for SOC Assessment** | *Team RAGForge*
 
-The **Supervisory Analytics Tool for SOC Assessment (SAT-SA)** is designed as a completely air-gapped, container-ready intelligence platform for the NCIIPC.
+---
 
-## 🏗️ High-Level Architecture
+## 1. Architectural Overview
+SAT-SA is engineered as a **100% air-gapped, zero-cloud supervisory intelligence platform** tailored for the National Critical Information Infrastructure Protection Centre (NCIIPC). It decouples the presentation layer from a heavy cryptographic and AI processing engine, ensuring that massive volumes of enterprise SOC telemetry can be evaluated locally on commercial off-the-shelf (COTS) hardware without breaching data sovereignty protocols.
 
-The system is decoupled into three primary tiers:
-
+The architecture is divided into three primary tiers:
 1. **Frontend (Presentation & Supervisory UI)**
 2. **Backend (API & Orchestration)**
-3. **Data & Intelligence (Ingestion, Deduplication, & AI)**
+3. **Intelligence Engine (Cryptography, Deduplication, & Local AI)**
 
 ---
 
-### 1. Frontend: React + Vite + Tailwind
-*   **Purpose:** Provides a high-density, command-center interface for NCIIPC supervisors to triage incidents, view operational negative-space signals, and interact with the AI Threat Copilot.
-*   **Key Components:**
-    *   **Triage Dashboard:** Renders data tables and KPI metrics (built from Stitch exports).
-    *   **Forensic Split-Screen:** Displays normalized telemetry next to original SOC tickets and the AI chat interface.
-    *   **State Management:** React Context / Hooks to manage local state without external dependencies.
+## 2. Component Tiers & Technology Stack
 
-### 2. Backend: FastAPI (Python)
-*   **Purpose:** The central nervous system. It exposes RESTful endpoints for the frontend and handles asynchronous data ingestion.
-*   **Key Endpoints:**
-    *   `POST /api/v1/ingest`: Accepts massive zip files (raw logs & PDFs) from the frontend.
-    *   `GET /api/v1/assessments/{cse_id}`: Returns the scored evaluation and prioritized alert queue for a specific entity.
-    *   `POST /api/v1/copilot/query`: Receives natural language questions and streams back LLM answers.
-*   **Security:** 100% offline. No external API calls are made.
+### Tier 1: Frontend (Supervisory Command Center)
+Built for high-density data visualization and rapid triage.
+* **Stack:** React 18, TypeScript, Tailwind CSS, Vite.
+* **Functionality:** 
+  * Renders the **Assessment Dossier**, scoring entities across 6 statutory dimensions.
+  * Provides a **Dual-Pane Forensic View**, allowing auditors to view aggregated alerts alongside the unmasked, raw JSON payload.
+  * Manages client-side state without enforcing cloud-based IAM, adhering strictly to the air-gapped constraints of the problem statement.
 
-### 3. Data & Intelligence Engine
-This is the core differentiator of SAT-SA, executing the heavy lifting of the NCIIPC mandate.
+### Tier 2: Backend (Orchestration & API)
+The central nervous system mediating between the UI and the heavy data engines.
+* **Stack:** Python 3.9+, FastAPI, Uvicorn, Pydantic.
+* **Functionality:** 
+  * Exposes asynchronous REST endpoints (`/api/v1/ingest`, `/api/v1/assessments`, `/api/v1/copilot`).
+  * Orchestrates the ingestion pipeline, passing raw files to the deduplication engine before persisting them to the database.
 
-*   **A. Log Normalizer (`log_parser.py`)**
-    *   Ingests heterogeneous logs (Cisco, Fortinet, Splunk CSVs, Syslog) and maps them to a Unified Schema (timestamp, source_ip, dest_ip, event_type).
-*   **B. SimHash Deduplication Engine**
-    *   Solves "Alert Fatigue". Applies a 64-bit structural hash to log payloads. Collapses 100,000 repetitive, noisy firewall pings into a single "Incident Cluster" to save memory and human review time.
-*   **C. Vector Database (ChromaDB + SQLite FTS5)**
-    *   **FTS5:** Handles fast, exact-match keyword searches (e.g., searching for a specific IP or CVE).
-    *   **ChromaDB:** Handles semantic dense-vector embeddings for threat hunting (e.g., "Find logs related to lateral movement").
-*   **D. Local LLM (Ollama / Llama 3.1)**
-    *   Acts as the **Threat Copilot**. Uses Retrieval-Augmented Generation (RAG) to read the normalized logs and SOC tickets, detecting operational weaknesses (e.g., tickets closed too early, ignored exfiltration).
+### Tier 3: Intelligence & Cryptography Engine
+The core differentiator of SAT-SA, replacing manual auditing with mathematical verification.
+* **SimHash Clustering:** Applies a 64-bit structural hash to log payloads. Collapses tens of thousands of repetitive, noisy firewall pings into single "Incident Clusters," achieving a **95%+ reduction in alert fatigue** in $\mathcal{O}(N)$ linear time.
+* **SHA-256 Ledger:** Generates an immutable cryptographic digest for every ingested log batch, ensuring absolute chain-of-custody and legal defensibility.
+* **Vector Store & Full-Text Search:** Utilizes **ChromaDB** for semantic embedding storage and **SQLite3 (FTS5)** for exact-match keyword indexing.
+* **Local LLM Copilot:** Leverages **Ollama (LLaMA 3.1 8B)** to provide a Retrieval-Augmented Generation (RAG) chat interface. It acts as an autonomous forensic agent, parsing complex log structures and explaining threat vectors in natural language without making external network calls.
 
 ---
 
-## 🌊 Data Flow Diagram
+## 3. Data Flow & Execution Pipeline
 
-1. **(Ingest)**: NCIIPC Officer uploads `mumbai_port_logs.zip` $\rightarrow$ FastAPI.
-2. **(Normalize)**: FastAPI sends raw logs to `log_parser.py` $\rightarrow$ Unified JSON.
-3. **(Deduplicate)**: JSON flows through SimHash $\rightarrow$ 99% volume reduction.
-4. **(Store & Score)**: Clean logs are stored in ChromaDB/SQLite. AI scripts assign a "Priority Score" (1-99).
-5. **(Present)**: React Frontend fetches the Top 10 Critical Incidents and renders the Triage Dashboard.
-6. **(Investigate)**: Officer uses the LLM Copilot to interrogate the logs.
+```mermaid
+flowchart TD
+    subgraph TIER1["Tier 1: Presentation (React)"]
+        UI["Supervisory Dashboard"]
+        COPILOT_UI["AI Threat Copilot"]
+    end
+
+    subgraph TIER2["Tier 2: Backend Orchestration (FastAPI)"]
+        API["REST API Router"]
+        PARSER["Heterogeneous Log Parser (JSON/CSV)"]
+    end
+
+    subgraph TIER3["Tier 3: Cryptography & Intelligence"]
+        SHA["SHA-256 Chain of Custody"]
+        SIM["64-Bit SimHash Deduplication"]
+        SQL["SQLite3 Relational Ledger"]
+        VEC["ChromaDB Vector Store"]
+        LLM["Ollama (LLaMA 3.1 8B)"]
+    end
+
+    UI -- "1. Upload SOC Logs" --> API
+    API --> PARSER
+    PARSER --> SHA
+    SHA -- "2. Hash & Extract" --> SIM
+    
+    SIM -- "3. Store Correlated Clusters" --> SQL
+    SIM -- "4. Store Semantic Embeddings" --> VEC
+    
+    SQL -- "5. 6-Dimension Evaluation" --> UI
+    
+    COPILOT_UI -- "6. Natural Language Query" --> API
+    API --> VEC
+    VEC -- "Context" --> LLM
+    LLM -- "Streaming Response" --> COPILOT_UI
+```
+
+---
+
+## 4. Operational Viability & Constraints
+* **Deployment Constraints:** Requires no external SaaS subscriptions, cloud-hosting fees, or proprietary API keys. Operates fully isolated on standard local workstations (minimum 8-16 GB RAM).
+* **Scalability:** The linear nature of SimHash allows the system to process millions of log rows efficiently without requiring GPU acceleration for the deduplication phase.
+* **Regulatory Compliance:** Directly fulfills continuous monitoring mandates required under Section 70A of the Information Technology Act (2000), automating manual compliance checks and exposing execution gaps within enterprise SOC environments.

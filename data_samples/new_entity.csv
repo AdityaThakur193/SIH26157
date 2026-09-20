@@ -1,2 +1,0 @@
-Timestamp,Source IP Address,Destination IP Address,Source Port,Destination Port,Protocol,Packet Length,Packet Type,Traffic Type,Payload Data,Malware Indicators,Anomaly Scores,Alerts/Warnings,Attack Type,Attack Signature,Action Taken,Severity Level,User Information,Device Information,Network Segment,Geo-location Data,Proxy Information,Firewall Logs,IDS/IPS Alerts,Log Source
-2026-09-19 10:00:00,1.1.1.1,2.2.2.2,1234,80,TCP,500,Data,HTTP,GET / HTTP/1.1,,0.5,,General,,Logged,Low,User A,Mozilla/5.0,Segment A,USA,,,,Firewall
